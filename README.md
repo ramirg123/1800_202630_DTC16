@@ -72,8 +72,6 @@ elmo-hikes/
 
 - **Ramir** - BCIT CST Student with a passion for making games and football. I also really like music from a lot of different genres.
 - **Jonathan** - BCIT CST Student and is a sports fan. Fun fact: has two cats.
-
-
 ---
 
 
