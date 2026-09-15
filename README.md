@@ -66,13 +66,14 @@ elmo-hikes/
 
 
 ## Contributors
+- Elika Zahedi - BCIT CST Student with a passion for outdoor adventures and user-friendly applications. Fun fact: Loves puzzles in under a minute.
 
 - **Michael Penn**: is a CST student who loves bouldering, reading and september fantasy football. My favoutrite thing to do is developing web apps with my group mates in COMP 1800. 
 
 - **Ramir** - BCIT CST Student with a passion for making games and football. I also really like music from a lot of different genres.
 - **Jonathan** - BCIT CST Student and is a sports fan. Fun fact: has two cats.
 
-- **Ramir** - BCIT CST Student with a passion for making games and football. I also really like music from a lot of different genres.
+
 ---
 
 
