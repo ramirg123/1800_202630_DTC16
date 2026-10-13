@@ -1,1 +1,26 @@
+a.mainButtons {
+  display: inline-block;
+  background-color: rebeccapurple;
+  padding: 10px 0px;
+  margin: 10px auto;
+  width: 150px;
+  text-align: center;
+  color: white;
+  text-decoration: none;
+  border-radius: 20px;
+  font-family:
+    Andale Mono,
+    monospace;
+}
 
+a#play {
+  padding: 10px 20px;
+  background-color: rebeccapurple;
+  font-size: 24px;
+  font-weight: bolder;
+}
+
+#callToAction {
+  display: flex;
+  flex-direction: column;
+}
