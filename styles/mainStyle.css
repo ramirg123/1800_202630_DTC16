@@ -1,0 +1,24 @@
+:root {
+  background-color: rebeccapurple;
+}
+
+h2 {
+  color: white;
+  text-align: center;
+  font-family:
+    Andale Mono,
+    monospace;
+}
+
+a {
+  color: rebeccapurple;
+  text-align: center;
+  text-decoration: none;
+  background-color: white;
+  font-weight: 500;
+  padding: 8px;
+  border-radius: 10px;
+  font-family:
+    Andale Mono,
+    monospace;
+}

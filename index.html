@@ -8,245 +8,196 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="styles/style.css" />
-
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
     <!-- Other libraries go here -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="src/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- style -->
+    <style>
+      :root {
+        --base: #0c000b;
+        --blob-1: #200216;
+        --blob-2: #2a0e3a;
+        --blob-3: #64339c;
+        --blob-4: #3b2769;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        background: var(--base);
+        overflow: hidden;
+      }
+
+      /* Background layer: put your page content in a separate element above it */
+      .bg {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        overflow: hidden;
+        background: var(--base);
+      }
+
+      .blob {
+        position: absolute;
+        width: 55vmax;
+        height: 55vmax;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.75;
+        will-change: transform;
+      }
+
+      .blob.one {
+        background: var(--blob-1);
+        top: -15%;
+        left: -10%;
+        animation: drift-a 22s ease-in-out infinite alternate;
+      }
+
+      .blob.two {
+        background: var(--blob-2);
+        top: 10%;
+        right: -20%;
+        animation: drift-b 28s ease-in-out infinite alternate;
+      }
+
+      .blob.three {
+        background: var(--blob-3);
+        bottom: -25%;
+        left: 10%;
+        animation: drift-c 25s ease-in-out infinite alternate;
+      }
+
+      .blob.four {
+        background: var(--blob-4);
+        bottom: -10%;
+        right: 5%;
+        width: 35vmax;
+        height: 35vmax;
+        opacity: 0.55;
+        animation: drift-a 31s ease-in-out infinite alternate-reverse;
+      }
+
+      @keyframes drift-a {
+        to {
+          transform: translate(18vw, 14vh) scale(1.15);
+        }
+      }
+
+      @keyframes drift-b {
+        to {
+          transform: translate(-20vw, 18vh) scale(0.9);
+        }
+      }
+
+      @keyframes drift-c {
+        to {
+          transform: translate(16vw, -16vh) scale(1.2);
+        }
+      }
+
+      /* Fine grain to stop the gradients from banding */
+      .bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        opacity: 0.08;
+        mix-blend-mode: overlay;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .blob {
+          animation: none;
+        }
+      }
+
+      #image {
+        text-align: center;
+      }
+
+      #image img {
+        width: 80%;
+        max-width: 600px;
+        height: auto;
+      }
+    </style>
   </head>
 
   <body>
-<style>
-  :root {
-    --base: #0c000b;
-    --blob-1: #200216;
-    --blob-2: #2a0e3a;
-    --blob-3: #64339c;
-    --blob-4: #3b2769;
-  }
- 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
- 
-  html, body { height: 100%; }
- 
-  body {
-    background: var(--base);
-    overflow: hidden;
-  }
- 
-  /* Background layer: put your page content in a separate element above it */
-  .bg {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    overflow: hidden;
-    background: var(--base);
-  }
- 
-  .blob {
-    position: absolute;
-    width: 55vmax;
-    height: 55vmax;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.75;
-    will-change: transform;
-  }
- 
-  .blob.one   { background: var(--blob-1); top: -15%; left: -10%; animation: drift-a 22s ease-in-out infinite alternate; }
-  .blob.two   { background: var(--blob-2); top: 10%;  right: -20%; animation: drift-b 28s ease-in-out infinite alternate; }
-  .blob.three { background: var(--blob-3); bottom: -25%; left: 10%; animation: drift-c 25s ease-in-out infinite alternate; }
-  .blob.four  { background: var(--blob-4); bottom: -10%; right: 5%; width: 35vmax; height: 35vmax; opacity: 0.55; animation: drift-a 31s ease-in-out infinite alternate-reverse; }
- 
-  @keyframes drift-a { to { transform: translate(18vw, 14vh) scale(1.15); } }
-  @keyframes drift-b { to { transform: translate(-20vw, 18vh) scale(0.9); } }
-  @keyframes drift-c { to { transform: translate(16vw, -16vh) scale(1.2); } }
- 
-  /* Fine grain to stop the gradients from banding */
-  .bg::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    opacity: 0.08;
-    mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
- 
-  @media (prefers-reduced-motion: reduce) {
-    .blob { animation: none; }
-  }
-</style>
-
-<head>
-  <title>My BCIT Project</title>
-  <meta name="comp1800 template" content="My 1800 App">
-
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-  <!-- Other libraries go here -->
-  <style>
-    :root {
-      --base: #0c000b;
-      --blob-1: #200216;
-      --blob-2: #2a0e3a;
-      --blob-3: #64339c;
-      --blob-4: #3b2769;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      height: 100%;
-    }
-
-    body {
-      background: var(--base);
-      overflow: hidden;
-    }
-
-    /* Background layer: put your page content in a separate element above it */
-    .bg {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      overflow: hidden;
-      background: var(--base);
-    }
-
-    .blob {
-      position: absolute;
-      width: 55vmax;
-      height: 55vmax;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.75;
-      will-change: transform;
-    }
-
-    .blob.one {
-      background: var(--blob-1);
-      top: -15%;
-      left: -10%;
-      animation: drift-a 22s ease-in-out infinite alternate;
-    }
-
-    .blob.two {
-      background: var(--blob-2);
-      top: 10%;
-      right: -20%;
-      animation: drift-b 28s ease-in-out infinite alternate;
-    }
-
-    .blob.three {
-      background: var(--blob-3);
-      bottom: -25%;
-      left: 10%;
-      animation: drift-c 25s ease-in-out infinite alternate;
-    }
-
-    .blob.four {
-      background: var(--blob-4);
-      bottom: -10%;
-      right: 5%;
-      width: 35vmax;
-      height: 35vmax;
-      opacity: 0.55;
-      animation: drift-a 31s ease-in-out infinite alternate-reverse;
-    }
-
-    @keyframes drift-a {
-      to {
-        transform: translate(18vw, 14vh) scale(1.15);
-      }
-    }
-
-    @keyframes drift-b {
-      to {
-        transform: translate(-20vw, 18vh) scale(0.9);
-      }
-    }
-
-    @keyframes drift-c {
-      to {
-        transform: translate(16vw, -16vh) scale(1.2);
-      }
-    }
-
-    /* Fine grain to stop the gradients from banding */
-    .bg::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      opacity: 0.08;
-      mix-blend-mode: overlay;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .blob {
-        animation: none;
-      }
-    }
-
-    #image {
-      text-align: center;
-    }
-
-    #image img {
-      width: 80%;
-      max-width: 600px;
-      height: auto;
-    }
-    
-  </style>
-</head>
-
-<body>
-  <!-- Elika's Section Start-->
-  <div class="bg" aria-hidden="true">
-    <div class="blob one"></div>
-    <div class="blob two"></div>
-    <div class="blob three"></div>
-    <div class="blob four"></div>
-  </div>
-  <!-- Elika's Section End -->
-
-  <!-- Jon's Section Start-->
-  <nav class="navbar px-3 py-2">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
-      <a href="#" class="text-white fs-1">
-        <i class="bi bi-person-circle"></i>
-      </a>
-
-      <div class="d-flex align-items-center gap-2 bg-white bg-opacity-10 text-white rounded px-3 py-1 fw-bold fs-5">
-        <i class="bi bi-hexagon-fill"></i>
-        23820
-      </div>
-
-      <a href="#" class="text-white fs-2">
-        <i class="bi bi-gear-fill"></i>
-      </a>
+    <!-- Elika's Section Start-->
+    <div class="bg" aria-hidden="true">
+      <div class="blob one"></div>
+      <div class="blob two"></div>
+      <div class="blob three"></div>
+      <div class="blob four"></div>
     </div>
-  </nav>
-  <!-- Jon's Section End -->
+    <!-- Elika's Section End -->
 
-  <!-- Michael's Section Start-->
-  <div id="image">
-    <img src="GAME-TITLE-2026-10-12.png" alt="GAME TITLE">
-    <a href="https://www.textstudio.com/" style="display: none;">Font generator</a>
-  </div>
-  <!-- Michael's Section End -->
+    <!-- Jon's Section Start-->
+    <nav class="navbar px-3 py-2">
+      <div
+        class="container-fluid d-flex justify-content-between align-items-center"
+      >
+        <a href="#" class="text-white fs-1">
+          <i class="bi bi-person-circle"></i>
+        </a>
+
+        <div
+          class="d-flex align-items-center gap-2 bg-white bg-opacity-10 text-white rounded px-3 py-1 fw-bold fs-5"
+        >
+          <i class="bi bi-hexagon-fill"></i>
+          23820
+        </div>
+
+        <a href="#" class="text-white fs-2">
+          <i class="bi bi-gear-fill"></i>
+        </a>
+      </div>
+    </nav>
+    <!-- Jon's Section End -->
+
+    <!-- Michael's Section Start-->
+    <div id="image">
+      <img
+        src="GAME-TITLE-2026-10-12.png"
+        alt="GAME TITLE"
+        style="margin: auto"
+      />
+      <a href="https://www.textstudio.com/" style="display: none"
+        >Font generator</a
+      >
+    </div>
+    <!-- Michael's Section End -->
 
     <!-- Ramir's Section Start-->
     <div id="callToAction">
       <a href="#" class="mainButtons" id="play">PLAY</a>
       <a href="#" class="mainButtons">ACHIEVEMENTS</a>
       <a href="#" class="mainButtons">SHOP</a>
+    </div>
+
+    <div id="profileMenu" class="hidden">
+      <p id="profileBackButton" class="inline-block">X</p>
+      <a href="login.html" id="loginButton">Login</a>
     </div>
     <!-- Ramir's Section End -->
 
