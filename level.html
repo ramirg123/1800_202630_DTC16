@@ -23,6 +23,7 @@
         .game-wrapper {
             width: fit-content;
             margin: 20px auto;
+            position: relative;
         }
 
         .level-bar {
@@ -82,6 +83,70 @@
         .inventory-btn:focus-visible {
             outline: 2px solid #fff;
         }
+                .inventory-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .inventory-overlay[hidden] {
+            display: none;
+        }
+
+        .inventory-panel {
+            width: 90%;
+            padding: 16px;
+            background: #2b2b2c;
+            border: 1px solid #060606;
+            border-radius: 12px;
+            color: #fff;
+        }
+
+        .inventory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .inventory-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .inventory-slot {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+        }
     </style>
 
     <link rel="stylesheet" href="styles/style.css" />
@@ -123,6 +188,18 @@
         </nav>
 
         <div id="game-container"></div>
+                <div id="inventory" class="inventory-overlay" hidden>
+                    <div class="inventory-panel" role="dialog" aria-labelledby="inventory-title">
+                        <div class="inventory-header">
+                            <h2 id="inventory-title">Inventory</h2>
+                            <button id="close-inventory" class="close-btn" aria-label="Close inventory">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                        <div class="inventory-grid" id="inventory-grid"></div>
+                    </div>
+                </div>
+
     </div>
     <!-- Jon's Section End -->
 
@@ -223,10 +300,10 @@
             gameArea.clear();
             testSprite.speedX = 0;
             testSprite.speedY = 0;
-            if (gameArea.key && gameArea.key == 37) { testSprite.speedX = -1; }
-            if (gameArea.key && gameArea.key == 39) { testSprite.speedX = 1; }
-            if (gameArea.key && gameArea.key == 38) { testSprite.speedY = -1; }
-            if (gameArea.key && gameArea.key == 40) { testSprite.speedY = 1; }
+            if (gameArea.key && gameArea.key == 37) { testSprite.speedX = -4; }
+            if (gameArea.key && gameArea.key == 39) { testSprite.speedX = 4; }
+            if (gameArea.key && gameArea.key == 38) { testSprite.speedY = -4; }
+            if (gameArea.key && gameArea.key == 40) { testSprite.speedY = 4; }
             testSprite.newPos();
             testSprite.update();
         }
@@ -255,6 +332,37 @@
             }
     
         */
+
+                // ---------- Inventory ----------
+                    const inventory = document.getElementById("inventory");
+                    const inventoryGrid = document.getElementById("inventory-grid");
+                    const SLOT_COUNT = 12;
+
+                    for (let i = 0; i < SLOT_COUNT; i++) {
+                        const slot = document.createElement("div");
+                        slot.className = "inventory-slot";
+                        inventoryGrid.appendChild(slot);
+                    }
+
+                    function openInventory() {
+                        if (!inventory.hidden) return;
+                        inventory.hidden = false;
+                        clearInterval(gameArea.interval);   // pause the game
+                        gameArea.key = false;               // stop any held movement
+                    }
+
+                    function closeInventory() {
+                        if (inventory.hidden) return;
+                        inventory.hidden = true;
+                        gameArea.interval = setInterval(updateGameArea, 20); // resume
+                    }
+
+                    document.querySelector(".inventory-btn").addEventListener("click", openInventory);
+                    document.getElementById("close-inventory").addEventListener("click", closeInventory);
+
+                    window.addEventListener("keydown", (e) => {
+                        if (e.key === "Escape") closeInventory();
+                    });
     </script>
 
     <!-- buttons -->
