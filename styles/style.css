@@ -25,4 +25,29 @@ a#play {
   flex-direction: column;
 }
 
+#profileMenu {
+  background-color: purple;
+  border-radius: 10px;
+  width: 30%;
+  margin: 20px 40px;
+  position: fixed;
+  padding: 10px 10px;
+  top: 0;
+  left: 0;
+}
 
+#profileBackButton {
+  text-align: center;
+  border-radius: 4px;
+  margin: 2px 5px;
+  color: purple;
+  max-width: 20px;
+  min-width: 20px;
+  background-color: white;
+}
+
+#loginButton {
+  text-decoration: none;
+  color: white;
+  margin-left: 5px;
+}
