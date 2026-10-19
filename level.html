@@ -19,6 +19,69 @@
             border: 1px solid #060606;
             background-color: #2b2b2c;
         }
+
+        .game-wrapper {
+            width: fit-content;
+            margin: 20px auto;
+        }
+
+        .level-bar {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 8px 10px;
+            background-color: #2b2b2c;
+            border: 1px solid #060606;
+            border-bottom: none;
+        }
+
+        #game-container canvas {
+            display: block;
+        }
+
+        .back-btn {
+            justify-self: start;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 22px;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .back-btn:focus-visible {
+            outline: 2px solid #fff;
+        }
+
+        .inventory-btn {
+            justify-self: end;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .inventory-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .inventory-btn:focus-visible {
+            outline: 2px solid #fff;
+        }
     </style>
 
     <link rel="stylesheet" href="styles/style.css" />
@@ -28,10 +91,11 @@
 <body onload="startGame()">
 
     <!-- Jon's Section Start-->
-    <nav class="navbar px-3 py-2">
-        <div class="container-fluid d-flex justify-content-between align-items-center">
-            <a href="#" class="text-white fs-1">
-                <i class="bi bi-person-circle"></i>
+    <div class="game-wrapper">
+        <nav class="level-bar">
+
+            <a href="level-select.html" class="back-btn" aria-label="Back to level select" title="Back">
+                <i class="bi bi-arrow-left"></i>
             </a>
 
             <div
@@ -40,14 +104,27 @@
                 23820
             </div>
 
-            <a href="#" class="text-white fs-2">
-                <i class="bi bi-gear-fill"></i>
-            </a>
-        </div>
-    </nav>
-    <!-- Jon's Section End -->
+            <button class="inventory-btn" aria-label="Inventory" title="Inventory">
+                <svg viewBox="0 0 64 64" width="30" height="30">
+                    <defs>
+                        <g id="sword" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round">
+                            <polygon points="32,4 37,11 37,40 27,40 27,11" fill="#dfe6ee" />
+                            <line x1="32" y1="10" x2="32" y2="37" stroke="#ffffff" stroke-width="2"
+                                stroke-linecap="round" />
+                            <rect x="21" y="40" width="22" height="6" rx="3" fill="#f2c230" />
+                            <rect x="29" y="46" width="6" height="10" rx="2" fill="#8b5a2b" />
+                            <circle cx="32" cy="58" r="4" fill="#f2c230" />
+                        </g>
+                    </defs>
+                    <use href="#sword" transform="rotate(-40 32 32)" />
+                    <use href="#sword" transform="rotate(40 32 32)" />
+                </svg>
+            </button>
+        </nav>
 
-    <div id="game-container" class="d-flex justify-content-center"></div>
+        <div id="game-container"></div>
+    </div>
+    <!-- Jon's Section End -->
 
     <script>
 
@@ -73,14 +150,14 @@
                     gameArea.y = e.touches[0].screenY;
                 }) */
 
-                 // keyboard movement
+                // keyboard movement
                 window.addEventListener('keydown', function (e) {
                     gameArea.key = e.keyCode;
                 })
                 window.addEventListener('keyup', function (e) {
                     gameArea.key = false;
                 })
-                
+
             },
 
             clear: function () {
@@ -153,7 +230,7 @@
             testSprite.newPos();
             testSprite.update();
         }
-        
+
 
         /* Button Movement
             function moveUp() {
