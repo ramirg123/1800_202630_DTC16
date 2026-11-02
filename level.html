@@ -27,7 +27,6 @@
 
 <body onload="startGame()">
 
-    <!-- Jon's Section Start-->
     <nav class="navbar px-3 py-2">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <a href="#" class="text-white fs-1">
@@ -45,7 +44,6 @@
             </a>
         </div>
     </nav>
-    <!-- Jon's Section End -->
 
     <div id="game-container" class="d-flex justify-content-center"></div>
 
@@ -63,17 +61,10 @@
             start: function () {
                 this.canvas.width = 380;
                 this.canvas.height = 600;
-                //this.canvas.style.cursor = "none"; //cursor movement
                 this.context = this.canvas.getContext("2d");
                 document.getElementById("game-container").appendChild(this.canvas);
                 this.interval = setInterval(updateGameArea, 20);
-                /*
-                window.addEventListener('touchmove', function (e) {
-                    gameArea.x = e.touches[0].screenX;
-                    gameArea.y = e.touches[0].screenY;
-                }) */
 
-                 // keyboard movement
                 window.addEventListener('keydown', function (e) {
                     gameArea.key = e.keyCode;
                 })
@@ -124,18 +115,6 @@
             }
         }
 
-        /*
-        function updateGameArea() {
-            gameArea.clear();
-            if (gameArea.x && gameArea.y) {
-                testSprite.x = gameArea.x;
-                testSprite.y = gameArea.y;
-            }
-            testSprite.update();
-        }
-
-        */
-        //Keyboard movement
         function updateGameArea() {
             gameArea.clear();
             testSprite.newPos();
@@ -153,38 +132,6 @@
             testSprite.newPos();
             testSprite.update();
         }
-        
-
-        /* Button Movement
-            function moveUp() {
-                testSprite.speedY -= 1;
-            }
-    
-            function moveDown() {
-                testSprite.speedY += 1;
-            }
-    
-            function moveLeft() {
-                testSprite.speedX -= 1;
-            }
-    
-            function moveRight() {
-                testSprite.speedX += 1;
-            }
-    
-            function stopMove() {
-                testSprite.speedX = 0;
-                testSprite.speedY = 0;
-            }
-    
-        */
     </script>
-
-    <!-- buttons -->
-    <!-- <button onclick="moveUp()">UP</button>
-    <button onclick="moveDown()">DOWN</button>
-    <button onclick="moveLeft()">LEFT</button>
-    <button onclick="moveRight()">RIGHT</button> -->
 </body>
-
 </html>
