@@ -211,7 +211,7 @@
             gameArea.start();
             testSprite = new component(50, 50, "red", 100, 100)
         }
-
+        // ---------- Canvas ----------
         var gameArea = {
             canvas: document.createElement("canvas"),
             start: function () {
@@ -221,7 +221,6 @@
                 document.getElementById("game-container").appendChild(this.canvas);
                 this.interval = setInterval(updateGameArea, 20);
 
-                // keyboard movement
                 window.addEventListener('keydown', function (e) {
                     gameArea.key = e.keyCode;
                 })
@@ -254,6 +253,8 @@
             setTouchPos(e);
         }, { passive: false });
 
+
+        // ---------- Sprite Movement ----------
         function component(width, height, colour, x, y) {
             this.width = width;
             this.height = height;
@@ -288,32 +289,7 @@
             if (gameArea.key && gameArea.key == 40) { testSprite.speedY = 4; }
             testSprite.newPos();
             testSprite.update();
-        }
 
-
-        /* Button Movement
-            function moveUp() {
-                testSprite.speedY -= 1;
-            }
-    
-            function moveDown() {
-                testSprite.speedY += 1;
-            }
-    
-            function moveLeft() {
-                testSprite.speedX -= 1;
-            }
-    
-            function moveRight() {
-                testSprite.speedX += 1;
-            }
-    
-            function stopMove() {
-                testSprite.speedX = 0;
-                testSprite.speedY = 0;
-            }
-    
-        */
 
                 // ---------- Inventory ----------
                     const inventory = document.getElementById("inventory");
