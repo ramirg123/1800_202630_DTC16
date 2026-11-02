@@ -1,6 +1,6 @@
 // Import the file that has the authentication helper function we want to use.
 // The function we want to use is called "onAuthReady" which returns the login state
-// import { onAuthReady } from "./authentication.js";
+import { onAuthReady } from "./authentication.js";
 
 function showName() {
     // Pass a CALLBACK function to run when Firebase finishes checking login status
