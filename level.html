@@ -307,7 +307,10 @@
             }
             this.newPos = function () {
                 this.x += this.speedX;
+                if (hitsAnyWall(this)) { this.x -= this.speedX; }
+
                 this.y += this.speedY;
+                if (hitsAnyWall(this)) { this.y -= this.speedY; }
             }
         }
 
