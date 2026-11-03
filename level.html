@@ -251,18 +251,17 @@
         </nav>
 
         <div id="game-container"></div>
-
-        <div id="inventory" class="inventory-overlay" hidden>
-            <div class="inventory-panel" role="dialog" aria-labelledby="inventory-title">
-                <div class="inventory-header">
-                    <h2 id="inventory-title">Inventory</h2>
-                    <button id="close-inventory" class="close-btn" aria-label="Close inventory">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
+                <div id="inventory" class="inventory-overlay" hidden>
+                    <div class="inventory-panel" role="dialog" aria-labelledby="inventory-title">
+                        <div class="inventory-header">
+                            <h2 id="inventory-title">Inventory</h2>
+                            <button id="close-inventory" class="close-btn" aria-label="Close inventory">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                        <div class="inventory-grid" id="inventory-grid"></div>
+                    </div>
                 </div>
-                <div class="inventory-grid" id="inventory-grid"></div>
-            </div>
-        </div>
 
         <div id="char-select" class="inventory-overlay" hidden>
             <div class="inventory-panel" role="dialog" aria-labelledby="char-title">
@@ -283,33 +282,49 @@
 
         var testSprite
 
+        var TILE = 40;
+        var testRoom = [
+            [1, 1, 1, 1, 2, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [2, 0, 0, 0, 0, 0, 0, 0, 2],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 2, 1, 1, 1, 1]
+        ];
+
         function startGame() {
             gameArea.start();
             testSprite = new component(50, 50, "red", 100, 100)
             openCharSelect(); // show the character picker when the level starts
+            testSprite = new component(25, 25, "red", 100, 100)
         }
+
+        // ---------- Canvas ----------
 
         var gameArea = {
             canvas: document.createElement("canvas"),
             start: function () {
-                this.canvas.width = 380;
+                this.canvas.width = 360;
                 this.canvas.height = 600;
-                //this.canvas.style.cursor = "none"; //cursor movement
                 this.context = this.canvas.getContext("2d");
                 document.getElementById("game-container").appendChild(this.canvas);
                 this.interval = setInterval(updateGameArea, 20);
-                /*
-                window.addEventListener('touchmove', function (e) {
-                    gameArea.x = e.touches[0].screenX;
-                    gameArea.y = e.touches[0].screenY;
-                }) */
-
-                // keyboard movement
+                // Movement
                 window.addEventListener('keydown', function (e) {
-                    gameArea.key = e.keyCode;
+                    gameArea.keys = (gameArea.keys || []);
+                    gameArea.keys[e.keyCode] = true;
                 })
                 window.addEventListener('keyup', function (e) {
-                    gameArea.key = false;
+                    gameArea.keys[e.keyCode] = false;
                 })
 
             },
@@ -318,6 +333,22 @@
                 this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
             }
         }
+
+        // ---------- Walls ----------
+
+        function drawRoom() {
+            var ctx = gameArea.context;
+            for (var row = 0; row < testRoom.length; row++) {
+                for (var col = 0; col < testRoom[row].length; col++) {
+                    if (testRoom[row][col] == 1) {
+                        ctx.fillStyle = "gray";
+                        ctx.fillRect(col * TILE, row * TILE, TILE, TILE);
+                    }
+                }
+            }
+        }
+
+        // ---------- Movement ----------
 
         function setTouchPos(e) {
             var rect = gameArea.canvas.getBoundingClientRect();
@@ -337,6 +368,7 @@
             setTouchPos(e);
         }, { passive: false });
 
+
         function component(width, height, colour, x, y) {
             this.width = width;
             this.height = height;
@@ -351,40 +383,49 @@
             }
             this.newPos = function () {
                 this.x += this.speedX;
+                if (hitsAnyWall(this)) { this.x -= this.speedX; }
+
                 this.y += this.speedY;
+                if (hitsAnyWall(this)) { this.y -= this.speedY; }
             }
         }
 
-        /*
         function updateGameArea() {
             gameArea.clear();
-            if (gameArea.x && gameArea.y) {
-                testSprite.x = gameArea.x;
-                testSprite.y = gameArea.y;
-            }
-            testSprite.update();
-        }
-
-        */
-        //Keyboard movement
-        function updateGameArea() {
-            gameArea.clear();
-            testSprite.newPos();
-            testSprite.update();
-        }
-
-        function updateGameArea() {
-            gameArea.clear();
+            drawRoom();
             testSprite.speedX = 0;
             testSprite.speedY = 0;
             if (gameArea.key && gameArea.key == 37) { testSprite.speedX = -25; }
             if (gameArea.key && gameArea.key == 39) { testSprite.speedX = 25; }
             if (gameArea.key && gameArea.key == 38) { testSprite.speedY = -25; }
             if (gameArea.key && gameArea.key == 40) { testSprite.speedY = 25; }
+            if (gameArea.keys && gameArea.keys[37]) { testSprite.speedX = -4; }
+            if (gameArea.keys && gameArea.keys[39]) { testSprite.speedX = 4; }
+            if (gameArea.keys && gameArea.keys[38]) { testSprite.speedY = -4; }
+            if (gameArea.keys && gameArea.keys[40]) { testSprite.speedY = 4; }
             testSprite.newPos();
             testSprite.update();
         }
 
+        // ---------- Wall Collision ----------
+
+        function isWallAt(x, y) {
+            var col = Math.floor(x / TILE);
+            var row = Math.floor(y / TILE);
+            return testRoom[row][col] == 1;
+        }
+
+        function hitsAnyWall(testSprite) {
+            var left = testSprite.x;
+            var right = testSprite.x + testSprite.width - 1;
+            var top = testSprite.y;
+            var bottom = testSprite.y + testSprite.height - 1;
+
+            return isWallAt(left, top) || isWallAt(right, top) ||
+                isWallAt(left, bottom) || isWallAt(right, bottom);
+        }
+
+        // ---------- Inventory ----------
 
         /* Button Movement
             function moveUp() {
@@ -420,6 +461,11 @@
             slot.className = "inventory-slot";
             inventoryGrid.appendChild(slot);
         }
+        for (let i = 0; i < SLOT_COUNT; i++) {
+            const slot = document.createElement("div");
+            slot.className = "inventory-slot";
+            inventoryGrid.appendChild(slot);
+        }
 
         function openInventory() {
             if (!inventory.hidden) return;
@@ -427,7 +473,18 @@
             clearInterval(gameArea.interval);   // pause the game
             gameArea.key = false;               // stop any held movement
         }
+        function openInventory() {
+            if (!inventory.hidden) return;
+            inventory.hidden = false;
+            clearInterval(gameArea.interval);   // pause the game
+            gameArea.key = false;               // stop any held movement
+        }
 
+        function closeInventory() {
+            if (inventory.hidden) return;
+            inventory.hidden = true;
+            gameArea.interval = setInterval(updateGameArea, 20); // resume
+        }
         function closeInventory() {
             if (inventory.hidden) return;
             inventory.hidden = true;
@@ -551,6 +608,8 @@
 
         document.getElementById("char-btn").addEventListener("click", openCharSelect);
         document.getElementById("close-char").addEventListener("click", closeCharSelect);
+        document.querySelector(".inventory-btn").addEventListener("click", openInventory);
+        document.getElementById("close-inventory").addEventListener("click", closeInventory);
 
         window.addEventListener("keydown", (e) => {
             if (e.key === "Escape") {
@@ -558,13 +617,12 @@
                 closeCharSelect();
             }
         });
-    </script>
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") closeInventory();
+        });
 
-    <!-- buttons -->
-    <!-- <button onclick="moveUp()">UP</button>
-    <button onclick="moveDown()">DOWN</button>
-    <button onclick="moveLeft()">LEFT</button>
-    <button onclick="moveRight()">RIGHT</button> -->
+
+    </script>
 </body>
 
 </html>
