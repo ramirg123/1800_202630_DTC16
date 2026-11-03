@@ -83,7 +83,8 @@
         .inventory-btn:focus-visible {
             outline: 2px solid #fff;
         }
-                .inventory-overlay {
+
+        .inventory-overlay {
             position: absolute;
             inset: 0;
             background: rgba(0, 0, 0, 0.6);
@@ -147,6 +148,62 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 8px;
         }
+
+        .char-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .char-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .char-btn:focus-visible {
+            outline: 2px solid #fff;
+        }
+
+        .char-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .char-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .char-option:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .char-option.selected {
+            border-color: #fff;
+        }
+
+        .char-option canvas {
+            border: none;
+            background: transparent;
+        }
     </style>
 
     <link rel="stylesheet" href="styles/style.css" />
@@ -169,36 +226,55 @@
                 23820
             </div>
 
-            <button class="inventory-btn" aria-label="Inventory" title="Inventory">
-                <svg viewBox="0 0 64 64" width="30" height="30">
-                    <defs>
-                        <g id="sword" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round">
-                            <polygon points="32,4 37,11 37,40 27,40 27,11" fill="#dfe6ee" />
-                            <line x1="32" y1="10" x2="32" y2="37" stroke="#ffffff" stroke-width="2"
-                                stroke-linecap="round" />
-                            <rect x="21" y="40" width="22" height="6" rx="3" fill="#f2c230" />
-                            <rect x="29" y="46" width="6" height="10" rx="2" fill="#8b5a2b" />
-                            <circle cx="32" cy="58" r="4" fill="#f2c230" />
-                        </g>
-                    </defs>
-                    <use href="#sword" transform="rotate(-40 32 32)" />
-                    <use href="#sword" transform="rotate(40 32 32)" />
-                </svg>
-            </button>
+            <div class="d-flex gap-2" style="justify-self: end;">
+                <button id="char-btn" class="char-btn" aria-label="Change character" title="Character">
+                    <i class="bi bi-person-fill"></i>
+                </button>
+
+                <button class="inventory-btn" aria-label="Inventory" title="Inventory">
+                    <svg viewBox="0 0 64 64" width="30" height="30">
+                        <defs>
+                            <g id="sword" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round">
+                                <polygon points="32,4 37,11 37,40 27,40 27,11" fill="#dfe6ee" />
+                                <line x1="32" y1="10" x2="32" y2="37" stroke="#ffffff" stroke-width="2"
+                                    stroke-linecap="round" />
+                                <rect x="21" y="40" width="22" height="6" rx="3" fill="#f2c230" />
+                                <rect x="29" y="46" width="6" height="10" rx="2" fill="#8b5a2b" />
+                                <circle cx="32" cy="58" r="4" fill="#f2c230" />
+                            </g>
+                        </defs>
+                        <use href="#sword" transform="rotate(-40 32 32)" />
+                        <use href="#sword" transform="rotate(40 32 32)" />
+                    </svg>
+                </button>
+            </div>
         </nav>
 
         <div id="game-container"></div>
-                <div id="inventory" class="inventory-overlay" hidden>
-                    <div class="inventory-panel" role="dialog" aria-labelledby="inventory-title">
-                        <div class="inventory-header">
-                            <h2 id="inventory-title">Inventory</h2>
-                            <button id="close-inventory" class="close-btn" aria-label="Close inventory">
-                                <i class="bi bi-x-lg"></i>
-                            </button>
-                        </div>
-                        <div class="inventory-grid" id="inventory-grid"></div>
-                    </div>
+
+        <div id="inventory" class="inventory-overlay" hidden>
+            <div class="inventory-panel" role="dialog" aria-labelledby="inventory-title">
+                <div class="inventory-header">
+                    <h2 id="inventory-title">Inventory</h2>
+                    <button id="close-inventory" class="close-btn" aria-label="Close inventory">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
                 </div>
+                <div class="inventory-grid" id="inventory-grid"></div>
+            </div>
+        </div>
+
+        <div id="char-select" class="inventory-overlay" hidden>
+            <div class="inventory-panel" role="dialog" aria-labelledby="char-title">
+                <div class="inventory-header">
+                    <h2 id="char-title">Choose your character</h2>
+                    <button id="close-char" class="close-btn" aria-label="Close character select">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="char-grid" id="char-grid"></div>
+            </div>
+        </div>
 
     </div>
     <!-- Jon's Section End -->
@@ -210,6 +286,7 @@
         function startGame() {
             gameArea.start();
             testSprite = new component(50, 50, "red", 100, 100)
+            openCharSelect(); // show the character picker when the level starts
         }
 
         var gameArea = {
@@ -267,10 +344,10 @@
             this.speedY = 0;
             this.x = x;
             this.y = y;
+
             this.update = function () {
                 ctx = gameArea.context;
-                ctx.fillStyle = colour;
-                ctx.fillRect(this.x, this.y, this.width, this.height);
+                drawCharacter(ctx, selectedCharacter, this.x, this.y, this.width);
             }
             this.newPos = function () {
                 this.x += this.speedX;
@@ -300,10 +377,10 @@
             gameArea.clear();
             testSprite.speedX = 0;
             testSprite.speedY = 0;
-            if (gameArea.key && gameArea.key == 37) { testSprite.speedX = -4; }
-            if (gameArea.key && gameArea.key == 39) { testSprite.speedX = 4; }
-            if (gameArea.key && gameArea.key == 38) { testSprite.speedY = -4; }
-            if (gameArea.key && gameArea.key == 40) { testSprite.speedY = 4; }
+            if (gameArea.key && gameArea.key == 37) { testSprite.speedX = -25; }
+            if (gameArea.key && gameArea.key == 39) { testSprite.speedX = 25; }
+            if (gameArea.key && gameArea.key == 38) { testSprite.speedY = -25; }
+            if (gameArea.key && gameArea.key == 40) { testSprite.speedY = 25; }
             testSprite.newPos();
             testSprite.update();
         }
@@ -333,36 +410,154 @@
     
         */
 
-                // ---------- Inventory ----------
-                    const inventory = document.getElementById("inventory");
-                    const inventoryGrid = document.getElementById("inventory-grid");
-                    const SLOT_COUNT = 12;
+        // ---------- Inventory ----------
+        const inventory = document.getElementById("inventory");
+        const inventoryGrid = document.getElementById("inventory-grid");
+        const SLOT_COUNT = 12;
 
-                    for (let i = 0; i < SLOT_COUNT; i++) {
-                        const slot = document.createElement("div");
-                        slot.className = "inventory-slot";
-                        inventoryGrid.appendChild(slot);
-                    }
+        for (let i = 0; i < SLOT_COUNT; i++) {
+            const slot = document.createElement("div");
+            slot.className = "inventory-slot";
+            inventoryGrid.appendChild(slot);
+        }
 
-                    function openInventory() {
-                        if (!inventory.hidden) return;
-                        inventory.hidden = false;
-                        clearInterval(gameArea.interval);   // pause the game
-                        gameArea.key = false;               // stop any held movement
-                    }
+        function openInventory() {
+            if (!inventory.hidden) return;
+            inventory.hidden = false;
+            clearInterval(gameArea.interval);   // pause the game
+            gameArea.key = false;               // stop any held movement
+        }
 
-                    function closeInventory() {
-                        if (inventory.hidden) return;
-                        inventory.hidden = true;
-                        gameArea.interval = setInterval(updateGameArea, 20); // resume
-                    }
+        function closeInventory() {
+            if (inventory.hidden) return;
+            inventory.hidden = true;
+            gameArea.interval = setInterval(updateGameArea, 20); // resume
+        }
 
-                    document.querySelector(".inventory-btn").addEventListener("click", openInventory);
-                    document.getElementById("close-inventory").addEventListener("click", closeInventory);
+        document.querySelector(".inventory-btn").addEventListener("click", openInventory);
+        document.getElementById("close-inventory").addEventListener("click", closeInventory);
 
-                    window.addEventListener("keydown", (e) => {
-                        if (e.key === "Escape") closeInventory();
-                    });
+        // ---------- Characters ----------
+        // Each letter is one pixel: H hair, S skin, E eyes, T shirt, P pants, B shoes, . empty
+        const PIXEL_TEMPLATE = [
+            "..HHHHHH..",
+            ".HHHHHHHH.",
+            ".HSSSSSSH.",
+            ".SSESSESS.",
+            ".SSSSSSSS.",
+            "..SSSSSS..",
+            ".TTTTTTTT.",
+            "STTTTTTTTS",
+            "..PPPPPP..",
+            "..BB..BB.."
+        ];
+
+        const characters = [
+            { name: "Ninja", ninja: true },
+            { name: "Ember", colours: { H: "#e8562a", S: "#f6c9a0", E: "#1a1a1a", T: "#3b5bdb", P: "#2b2b2c", B: "#5c3a1e" } },
+            { name: "Moss", colours: { H: "#3f7d33", S: "#e0ac80", E: "#1a1a1a", T: "#f2c230", P: "#4a4a4a", B: "#222222" } },
+            { name: "Frost", colours: { H: "#e8eef5", S: "#c79a76", E: "#2563eb", T: "#7c3aed", P: "#1f2937", B: "#111111" } },
+            { name: "Coal", colours: { H: "#151515", S: "#8d5a3b", E: "#ffffff", T: "#dc2626", P: "#1f2937", B: "#111111" } },
+            { name: "Sunny", colours: { H: "#f5c518", S: "#f1c7a4", E: "#1a1a1a", T: "#10b981", P: "#2b2b2c", B: "#5c3a1e" } }
+        ];
+
+        let selectedCharacter = characters[0];
+
+        function drawNinja(ctx, x, y, size) {
+            // body
+            ctx.fillStyle = "red";
+            ctx.fillRect(x, y, size, size);
+
+            // headband and tails
+            ctx.fillStyle = "white";
+            ctx.fillRect(x, y + size * 0.15, size, size * 0.15);
+            ctx.fillRect(x + size, y + size * 0.15, size * 0.25, size * 0.06);
+            ctx.fillRect(x + size, y + size * 0.24, size * 0.2, size * 0.06);
+
+            // eyes
+            ctx.fillStyle = "black";
+            ctx.beginPath();
+            ctx.arc(x + size * 0.3, y + size * 0.5, size * 0.09, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x + size * 0.7, y + size * 0.5, size * 0.09, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawPixelChar(ctx, colours, x, y, size) {
+            const cell = size / PIXEL_TEMPLATE.length;
+            for (let row = 0; row < PIXEL_TEMPLATE.length; row++) {
+                for (let col = 0; col < PIXEL_TEMPLATE[row].length; col++) {
+                    const key = PIXEL_TEMPLATE[row][col];
+                    if (key === ".") continue;
+                    ctx.fillStyle = colours[key];
+                    ctx.fillRect(x + col * cell, y + row * cell, cell, cell);
+                }
+            }
+        }
+
+        function drawCharacter(ctx, character, x, y, size) {
+            if (character.ninja) {
+                drawNinja(ctx, x, y, size);
+            } else {
+                drawPixelChar(ctx, character.colours, x, y, size);
+            }
+        }
+
+        // ---------- Character select popup ----------
+        const charSelect = document.getElementById("char-select");
+        const charGrid = document.getElementById("char-grid");
+
+        characters.forEach(function (character) {
+            const option = document.createElement("button");
+            option.className = "char-option";
+            if (character === selectedCharacter) option.classList.add("selected");
+
+            const preview = document.createElement("canvas");
+            preview.width = 64;
+            preview.height = 50;
+            drawCharacter(preview.getContext("2d"), character, 0, 0, 50);
+
+            const label = document.createElement("span");
+            label.textContent = character.name;
+
+            option.appendChild(preview);
+            option.appendChild(label);
+
+            option.addEventListener("click", function () {
+                selectedCharacter = character;
+                document.querySelectorAll(".char-option").forEach(function (o) {
+                    o.classList.remove("selected");
+                });
+                option.classList.add("selected");
+                closeCharSelect();
+            });
+
+            charGrid.appendChild(option);
+        });
+
+        function openCharSelect() {
+            if (!charSelect.hidden) return;
+            charSelect.hidden = false;
+            clearInterval(gameArea.interval);   // pause the game
+            gameArea.key = false;               // stop any held movement
+        }
+
+        function closeCharSelect() {
+            if (charSelect.hidden) return;
+            charSelect.hidden = true;
+            gameArea.interval = setInterval(updateGameArea, 20); // resume
+        }
+
+        document.getElementById("char-btn").addEventListener("click", openCharSelect);
+        document.getElementById("close-char").addEventListener("click", closeCharSelect);
+
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                closeInventory();
+                closeCharSelect();
+            }
+        });
     </script>
 
     <!-- buttons -->
