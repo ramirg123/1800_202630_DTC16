@@ -418,16 +418,13 @@
             drawRoom();
             testSprite.speedX = 0;
             testSprite.speedY = 0;
-            if (gameArea.key && gameArea.key == 37) { testSprite.speedX = -25; }
-            if (gameArea.key && gameArea.key == 39) { testSprite.speedX = 25; }
-            if (gameArea.key && gameArea.key == 38) { testSprite.speedY = -25; }
-            if (gameArea.key && gameArea.key == 40) { testSprite.speedY = 25; }
             if (gameArea.keys && gameArea.keys[37]) { testSprite.speedX = -4; }
             if (gameArea.keys && gameArea.keys[39]) { testSprite.speedX = 4; }
             if (gameArea.keys && gameArea.keys[38]) { testSprite.speedY = -4; }
             if (gameArea.keys && gameArea.keys[40]) { testSprite.speedY = 4; }
             testSprite.newPos();
 
+            
             // Made it out the bottom door → go to Street View
             if (testSprite.y > gameArea.canvas.height) {
                 clearInterval(gameArea.interval);   // stop the game loop
