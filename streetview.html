@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Where in the World?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles/streetview.css" />
+</head>
+
+<body>
+    <main class="room">
+        <header class="room-header">
+            <h1>Where in the World?</h1>
+            <p id="round-info" class="hint">Look around, then pick the continent.</p>
+        </header>
+
+        <div class="pano-frame">
+            <div id="pano" class="pano" aria-label="Street View"></div>
+            <canvas id="player-sprite" class="player-sprite" width="130" height="100" aria-hidden="true"></canvas>
+            <p id="pano-status" class="pano-status">Finding a spot…</p>
+        </div>
+
+        <p id="message" class="message" role="status" aria-live="polite"></p>
+
+        <div id="choices" class="choices" aria-label="Continents"></div>
+
+        <div class="actions">
+            <button id="next" class="btn" hidden>Next round</button>
+            <a id="back-to-map" class="btn btn-quiet" href="level.html">Back to map</a>
+        </div>
+    </main>
+
+    <script src="./src/characters.js"></script>
+    <script src="./src/streetview.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="./src/player3d.js"></script>
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCbZFLZ60TutNIr2gCaD0d4uzDtWehMvxw&callback=initGame&loading=async">
+    </script>
+</body>
+
+</html>
