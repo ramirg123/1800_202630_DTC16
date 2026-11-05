@@ -206,10 +206,10 @@
 
     <script>
 
-        var testSprite
+        let testSprite
 
-        var TILE = 40;
-        var testRoom = [
+        const TILE = 40;
+        const testRoom = [
             [1, 1, 1, 1, 2, 1, 1, 1, 1],
             [1, 0, 0, 0, 0, 0, 0, 0, 1],
             [1, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -234,7 +234,7 @@
 
         // ---------- Canvas ----------
 
-        var gameArea = {
+        const gameArea = {
             canvas: document.createElement("canvas"),
             start: function () {
                 this.canvas.width = 360;
@@ -261,9 +261,9 @@
         // ---------- Walls ----------
 
         function drawRoom() {
-            var ctx = gameArea.context;
-            for (var row = 0; row < testRoom.length; row++) {
-                for (var col = 0; col < testRoom[row].length; col++) {
+            let ctx = gameArea.context;
+            for (let row = 0; row < testRoom.length; row++) {
+                for (let col = 0; col < testRoom[row].length; col++) {
                     if (testRoom[row][col] == 1) {
                         ctx.fillStyle = "gray";
                         ctx.fillRect(col * TILE, row * TILE, TILE, TILE);
@@ -275,9 +275,9 @@
         // ---------- Movement ----------
 
         function setTouchPos(e) {
-            var rect = gameArea.canvas.getBoundingClientRect();
-            var scaleX = gameArea.canvas.width / rect.width;
-            var scaleY = gameArea.canvas.height / rect.height;
+            let rect = gameArea.canvas.getBoundingClientRect();
+            let scaleX = gameArea.canvas.width / rect.width;
+            let scaleY = gameArea.canvas.height / rect.height;
             gameArea.x = (e.touches[0].clientX - rect.left) * scaleX;
             gameArea.y = (e.touches[0].clientY - rect.top) * scaleY;
         }
@@ -301,7 +301,7 @@
             this.x = x;
             this.y = y;
             this.update = function () {
-                ctx = gameArea.context;
+                let ctx = gameArea.context;
                 ctx.fillStyle = colour;
                 ctx.fillRect(this.x, this.y, this.width, this.height);
             }
@@ -330,16 +330,16 @@
         // ---------- Wall Collision ----------
 
         function isWallAt(x, y) {
-            var col = Math.floor(x / TILE);
-            var row = Math.floor(y / TILE);
+            let col = Math.floor(x / TILE);
+            let row = Math.floor(y / TILE);
             return testRoom[row][col] == 1;
         }
 
         function hitsAnyWall(testSprite) {
-            var left = testSprite.x;
-            var right = testSprite.x + testSprite.width - 1;
-            var top = testSprite.y;
-            var bottom = testSprite.y + testSprite.height - 1;
+            let left = testSprite.x;
+            let right = testSprite.x + testSprite.width - 1;
+            let top = testSprite.y;
+            let bottom = testSprite.y + testSprite.height - 1;
 
             return isWallAt(left, top) || isWallAt(right, top) ||
                 isWallAt(left, bottom) || isWallAt(right, bottom);
@@ -361,7 +361,7 @@
             if (!inventory.hidden) return;
             inventory.hidden = false;
             clearInterval(gameArea.interval);   // pause the game
-            gameArea.key = false;               // stop any held movement
+            gameArea.keys = [];               // stop any held movement
         }
 
         function closeInventory() {

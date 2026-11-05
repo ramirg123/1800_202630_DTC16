@@ -11,7 +11,8 @@ function showName() {
         if (user) {
             // User is logged in
             const name = user.displayName || user.email;  // Use email if name is missing
-            document.getElementById("name-goes-here").textContent = name + "!";
+            // document.getElementById("name-goes-here").textContent = name + "!";
+            $("#signInText").html("Hello, " + name + "!");
         } else {
             // User is NOT logged in
             location.href = "index.html";  // Redirect to login page
