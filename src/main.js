@@ -28,4 +28,6 @@ $(document).ready(function () {
     $("#profileBackButton").on("click", function () {
         $("#profileMenu").addClass("hidden")
     });
+
+    showName();
 })
