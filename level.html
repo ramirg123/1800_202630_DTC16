@@ -251,17 +251,17 @@
         </nav>
 
         <div id="game-container"></div>
-                <div id="inventory" class="inventory-overlay" hidden>
-                    <div class="inventory-panel" role="dialog" aria-labelledby="inventory-title">
-                        <div class="inventory-header">
-                            <h2 id="inventory-title">Inventory</h2>
-                            <button id="close-inventory" class="close-btn" aria-label="Close inventory">
-                                <i class="bi bi-x-lg"></i>
-                            </button>
-                        </div>
-                        <div class="inventory-grid" id="inventory-grid"></div>
-                    </div>
+        <div id="inventory" class="inventory-overlay" hidden>
+            <div class="inventory-panel" role="dialog" aria-labelledby="inventory-title">
+                <div class="inventory-header">
+                    <h2 id="inventory-title">Inventory</h2>
+                    <button id="close-inventory" class="close-btn" aria-label="Close inventory">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
                 </div>
+                <div class="inventory-grid" id="inventory-grid"></div>
+            </div>
+        </div>
 
         <div id="char-select" class="inventory-overlay" hidden>
             <div class="inventory-panel" role="dialog" aria-labelledby="char-title">
@@ -278,35 +278,45 @@
     </div>
     <!-- Jon's Section End -->
 
+    <script src="./src/characters.js"></script>
     <script>
 
         var testSprite
 
-        var TILE = 40;
+        var TILE = 24;
         var testRoom = [
-            [1, 1, 1, 1, 2, 1, 1, 1, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [2, 0, 0, 0, 0, 0, 0, 0, 2],
-            [1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 1, 1, 1, 2, 1, 1, 1, 1]
+             [1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1],
+            [1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+            [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
+            [1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+            [1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
+            [1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1],
+            [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1],
+            [1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+            [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1],
+            [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1],
+            [1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
+            [1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1],
+            [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1],
+            [1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1],
+            [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+            [1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1],
+            [1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1],
+            [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1],
+            [1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1]
         ];
 
-        function startGame() {
-            gameArea.start();
-            testSprite = new component(50, 50, "red", 100, 100)
-            openCharSelect(); // show the character picker when the level starts
-            testSprite = new component(25, 25, "red", 100, 100)
-        }
+         function startGame() {
+                gameArea.start();
+                openCharSelect(); // show the character picker when the level starts
+                testSprite = new component(16, 16, "red", 172, 28);
+            }
 
         // ---------- Canvas ----------
 
@@ -340,9 +350,22 @@
             var ctx = gameArea.context;
             for (var row = 0; row < testRoom.length; row++) {
                 for (var col = 0; col < testRoom[row].length; col++) {
+                    var x = col * TILE;
+                    var y = row * TILE;
+
                     if (testRoom[row][col] == 1) {
                         ctx.fillStyle = "gray";
-                        ctx.fillRect(col * TILE, row * TILE, TILE, TILE);
+                        ctx.fillRect(x, y, TILE, TILE);
+                    } else if (testRoom[row][col] == 2) {
+                        // Door
+                        ctx.fillStyle = "#5c3a1e";                        // dark brown frame
+                        ctx.fillRect(x, y, TILE, TILE);
+                        ctx.fillStyle = "#8b5a2b";                        // lighter brown door
+                        ctx.fillRect(x + 4, y + 4, TILE - 8, TILE - 4);
+                        ctx.fillStyle = "#6b4423";                        // plank lines
+                        ctx.fillRect(x + TILE / 2 - 1, y + 4, 2, TILE - 4);
+                        ctx.fillStyle = "#f2c230";                        // gold knob
+                        ctx.fillRect(x + TILE - 12, y + TILE / 2, 4, 4);
                     }
                 }
             }
@@ -404,6 +427,13 @@
             if (gameArea.keys && gameArea.keys[38]) { testSprite.speedY = -4; }
             if (gameArea.keys && gameArea.keys[40]) { testSprite.speedY = 4; }
             testSprite.newPos();
+
+            // Made it out the bottom door → go to Street View
+            if (testSprite.y > gameArea.canvas.height) {
+                clearInterval(gameArea.interval);   // stop the game loop
+                window.location.href = "streetview.html";
+                return;
+            }
             testSprite.update();
         }
 
@@ -412,6 +442,8 @@
         function isWallAt(x, y) {
             var col = Math.floor(x / TILE);
             var row = Math.floor(y / TILE);
+            if (row < 0) return true;                   // top door: blocked (that's the entrance)
+            if (row >= testRoom.length) return false;   // bottom door: open, leads out of the maze
             return testRoom[row][col] == 1;
         }
 
@@ -494,72 +526,8 @@
         document.querySelector(".inventory-btn").addEventListener("click", openInventory);
         document.getElementById("close-inventory").addEventListener("click", closeInventory);
 
-        // ---------- Characters ----------
-        // Each letter is one pixel: H hair, S skin, E eyes, T shirt, P pants, B shoes, . empty
-        const PIXEL_TEMPLATE = [
-            "..HHHHHH..",
-            ".HHHHHHHH.",
-            ".HSSSSSSH.",
-            ".SSESSESS.",
-            ".SSSSSSSS.",
-            "..SSSSSS..",
-            ".TTTTTTTT.",
-            "STTTTTTTTS",
-            "..PPPPPP..",
-            "..BB..BB.."
-        ];
-
-        const characters = [
-            { name: "Ninja", ninja: true },
-            { name: "Ember", colours: { H: "#e8562a", S: "#f6c9a0", E: "#1a1a1a", T: "#3b5bdb", P: "#2b2b2c", B: "#5c3a1e" } },
-            { name: "Moss", colours: { H: "#3f7d33", S: "#e0ac80", E: "#1a1a1a", T: "#f2c230", P: "#4a4a4a", B: "#222222" } },
-            { name: "Frost", colours: { H: "#e8eef5", S: "#c79a76", E: "#2563eb", T: "#7c3aed", P: "#1f2937", B: "#111111" } },
-            { name: "Coal", colours: { H: "#151515", S: "#8d5a3b", E: "#ffffff", T: "#dc2626", P: "#1f2937", B: "#111111" } },
-            { name: "Sunny", colours: { H: "#f5c518", S: "#f1c7a4", E: "#1a1a1a", T: "#10b981", P: "#2b2b2c", B: "#5c3a1e" } }
-        ];
-
-        let selectedCharacter = characters[0];
-
-        function drawNinja(ctx, x, y, size) {
-            // body
-            ctx.fillStyle = "red";
-            ctx.fillRect(x, y, size, size);
-
-            // headband and tails
-            ctx.fillStyle = "white";
-            ctx.fillRect(x, y + size * 0.15, size, size * 0.15);
-            ctx.fillRect(x + size, y + size * 0.15, size * 0.25, size * 0.06);
-            ctx.fillRect(x + size, y + size * 0.24, size * 0.2, size * 0.06);
-
-            // eyes
-            ctx.fillStyle = "black";
-            ctx.beginPath();
-            ctx.arc(x + size * 0.3, y + size * 0.5, size * 0.09, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(x + size * 0.7, y + size * 0.5, size * 0.09, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        function drawPixelChar(ctx, colours, x, y, size) {
-            const cell = size / PIXEL_TEMPLATE.length;
-            for (let row = 0; row < PIXEL_TEMPLATE.length; row++) {
-                for (let col = 0; col < PIXEL_TEMPLATE[row].length; col++) {
-                    const key = PIXEL_TEMPLATE[row][col];
-                    if (key === ".") continue;
-                    ctx.fillStyle = colours[key];
-                    ctx.fillRect(x + col * cell, y + row * cell, cell, cell);
-                }
-            }
-        }
-
-        function drawCharacter(ctx, character, x, y, size) {
-            if (character.ninja) {
-                drawNinja(ctx, x, y, size);
-            } else {
-                drawPixelChar(ctx, character.colours, x, y, size);
-            }
-        }
+        // ---------- Characters ---------- (drawing code is in src/characters.js)
+        let selectedCharacter = getSavedCharacter();
 
         // ---------- Character select popup ----------
         const charSelect = document.getElementById("char-select");
@@ -583,6 +551,7 @@
 
             option.addEventListener("click", function () {
                 selectedCharacter = character;
+                saveCharacter(character);
                 document.querySelectorAll(".char-option").forEach(function (o) {
                     o.classList.remove("selected");
                 });
