@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="styles/style.css" />
+    <link rel="stylesheet" href="styles/levelStyle.css" />
 
 </head>
 
@@ -84,41 +84,43 @@
     <script src="./src/characters.js"></script>
     <script>
 
-        let testSprite
+        let sprite
+        let star
 
         const TILE = 24;
-        const testRoom = [
-            [1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1],
-            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1],
-            [1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1],
-            [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
-            [1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],
-            [1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
-            [1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1],
-            [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1],
-            [1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1],
-            [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1],
-            [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1],
-            [1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
-            [1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1],
-            [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1],
-            [1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1],
-            [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-            [1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1],
-            [1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1],
-            [1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1],
-            [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1],
-            [1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],
-            [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1]
+        const room = [
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+            [1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1],
+            [1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+            [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+            [1, 1, 2, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
+            [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 4, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ];
 
         function startGame() {
             gameArea.start();
             openCharSelect(); // show the character picker when the level starts
-            testSprite = new component(16, 16, "red", 172, 28);
+            sprite = new component(16, 16, "red", 100, 400);
+            star = new component()
         }
 
         // ---------- Canvas ----------
@@ -151,15 +153,15 @@
 
         function drawRoom() {
             let ctx = gameArea.context;
-            for (let row = 0; row < testRoom.length; row++) {
-                for (let col = 0; col < testRoom[row].length; col++) {
+            for (let row = 0; row < room.length; row++) {
+                for (let col = 0; col < room[row].length; col++) {
                     let x = col * TILE;
                     let y = row * TILE;
 
-                    if (testRoom[row][col] == 1) {
+                    if (room[row][col] == 1) {
                         ctx.fillStyle = "gray";
                         ctx.fillRect(x, y, TILE, TILE);
-                    } else if (testRoom[row][col] == 2) {
+                    } else if (room[row][col] >= 2) {
                         // Door
                         ctx.fillStyle = "#5c3a1e";                        // dark brown frame
                         ctx.fillRect(x, y, TILE, TILE);
@@ -196,6 +198,11 @@
 
 
         function component(width, height, colour, x, y) {
+            this.type = type;
+            if (type = "image") {
+                this.image = new Image();
+                this.image.src = colour;
+            }
             this.width = width;
             this.height = height;
             this.speedX = 0;
@@ -220,22 +227,30 @@
         function updateGameArea() {
             gameArea.clear();
             drawRoom();
-            testSprite.speedX = 0;
-            testSprite.speedY = 0;
-            if (gameArea.keys && gameArea.keys[37]) { testSprite.speedX = -4; }
-            if (gameArea.keys && gameArea.keys[39]) { testSprite.speedX = 4; }
-            if (gameArea.keys && gameArea.keys[38]) { testSprite.speedY = -4; }
-            if (gameArea.keys && gameArea.keys[40]) { testSprite.speedY = 4; }
-            testSprite.newPos();
+            sprite.speedX = 0;
+            sprite.speedY = 0;
+            if (gameArea.keys && gameArea.keys[37]) { sprite.speedX = -4; }
+            if (gameArea.keys && gameArea.keys[39]) { sprite.speedX = 4; }
+            if (gameArea.keys && gameArea.keys[38]) { sprite.speedY = -4; }
+            if (gameArea.keys && gameArea.keys[40]) { sprite.speedY = 4; }
+            sprite.newPos();
 
-
+        /*
             // Made it out the bottom door → go to Street View
-            if (testSprite.y > gameArea.canvas.height) {
+            if (sprite.y > gameArea.canvas.height) {
                 clearInterval(gameArea.interval);   // stop the game loop
                 window.location.href = "streetview.html";
                 return;
             }
-            testSprite.update();
+        */
+            sprite.update();
+        
+            let door = underDoor(sprite);
+
+            if (door == 3) {
+                clearInterval(gameArea.interval);
+                window.location.href = "streetview.html"
+            }
         }
 
         // ---------- Wall Collision ----------
@@ -244,42 +259,56 @@
             let col = Math.floor(x / TILE);
             let row = Math.floor(y / TILE);
             if (row < 0) return true;                   // top door: blocked (that's the entrance)
-            if (row >= testRoom.length) return false;   // bottom door: open, leads out of the maze
-            return testRoom[row][col] == 1;
+            if (row >= room.length) return false;   // bottom door: open, leads out of the maze
+            return room[row][col] == 1;
         }
 
-        function hitsAnyWall(testSprite) {
-            let left = testSprite.x;
-            let right = testSprite.x + testSprite.width - 1;
-            let top = testSprite.y;
-            let bottom = testSprite.y + testSprite.height - 1;
+        function hitsAnyWall(sprite) {
+            let left = sprite.x;
+            let right = sprite.x + sprite.width - 1;
+            let top = sprite.y;
+            let bottom = sprite.y + sprite.height - 1;
 
             return isWallAt(left, top) || isWallAt(right, top) ||
                 isWallAt(left, bottom) || isWallAt(right, bottom);
+        }
+
+        // ---------- Doors ----------
+
+        function tileAt(x, y) {
+            let col = Math.floor(x / TILE);
+            let row = Math.floor(y / TILE);
+            return room[row][col];
+        }
+
+        function underDoor(sprite) {
+            let centerX = sprite.x + sprite.width / 2;
+            let centerY = sprite.y + sprite.height / 2;
+            return tileAt(centerX, centerY);
         }
 
         // ---------- Inventory ----------
 
         /* Button Movement
             function moveUp() {
-                testSprite.speedY -= 1;
+                sprite.speedY -= 1;
             }
     
             function moveDown() {
-                testSprite.speedY += 1;
+                sprite.speedY += 1;
             }
     
             function moveLeft() {
-                testSprite.speedX -= 1;
+                sprite.speedX -= 1;
             }
     
             function moveRight() {
-                testSprite.speedX += 1;
+                sprite.speedX += 1;
             }
     
             function stopMove() {
-                testSprite.speedX = 0;
-                testSprite.speedY = 0;
+                sprite.speedX = 0;
+                sprite.speedY = 0;
             }
     
         */
