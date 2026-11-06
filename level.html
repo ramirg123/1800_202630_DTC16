@@ -13,7 +13,7 @@
 
 </head>
 
-<body onload="startGame()">
+<body>
 
     <!-- Jon's Section Start-->
     <div class="game-wrapper">
@@ -82,7 +82,10 @@
     <!-- Jon's Section End -->
 
     <script src="./src/characters.js"></script>
-    <script>
+    <script type="module">
+        import { auth, db } from "./src/firebaseConfig.js";
+        import { onAuthStateChanged } from "firebase/auth";
+        import { doc, getDoc, setDoc, arrayUnion } from "firebase/firestore";  
 
         let testSprite
 

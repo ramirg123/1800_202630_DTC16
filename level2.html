@@ -82,10 +82,48 @@
     <!-- Jon's Section End -->
 
     <script src="./src/characters.js"></script>
-    <script>
+    <script type="module">
+
+        // ---------- Firestore ----------
+
+        import { auth, db } from "./src/firebaseConfig.js";
+        import { onAuthStateChanged } from "firebase/auth";
+        import { doc, getDoc, setDoc, arrayUnion } from "firebase/firestore";
 
         let sprite
-        let star
+
+        const STAR = 5;
+
+        const starImage = new Image();
+        starImage.src = "images/star.png"
+
+        let collected = [];
+        let starsCollected = 0;
+        let userID = null;
+        let lastSave = Promise.resolve();
+
+        onAuthStateChanged(auth, async function (user) {
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
+            userId = user.uid;
+
+            const snap = await getDoc(doc(db, "users", userId));
+            if (snap.exists() && snap.data().level2Stars) {
+                collected = snap.data().level2Stars;
+            }
+
+            for (let i = 0; i < collected.length; i++) {
+                let parts = collected[i].split(",");
+                testRoom[Number(parts[0])][Number(parts[1])] = 0;
+            }
+            starsCollected = collected.length;
+
+            startGame();
+        })
+
+        // ---------- Game Room ----------
 
         const TILE = 24;
         const room = [
@@ -120,7 +158,6 @@
             gameArea.start();
             openCharSelect(); // show the character picker when the level starts
             sprite = new component(16, 16, "red", 100, 400);
-            star = new component()
         }
 
         // ---------- Canvas ----------
@@ -212,9 +249,14 @@
 
             this.update = function () {
                 let ctx = gameArea.context;
-                ctx.fillStyle = colour;
-                ctx.fillRect(this.x, this.y, this.width, this.height);
+                if (this.type == "image") {
+                    ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+                } else {
+                    ctx.fillStyle = colour;
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                }
             }
+
             this.newPos = function () {
                 this.x += this.speedX;
                 if (hitsAnyWall(this)) { this.x -= this.speedX; }
@@ -235,21 +277,24 @@
             if (gameArea.keys && gameArea.keys[40]) { sprite.speedY = 4; }
             sprite.newPos();
 
-        /*
-            // Made it out the bottom door → go to Street View
-            if (sprite.y > gameArea.canvas.height) {
-                clearInterval(gameArea.interval);   // stop the game loop
-                window.location.href = "streetview.html";
-                return;
-            }
-        */
+            /*
+                // Made it out the bottom door → go to Street View
+                if (sprite.y > gameArea.canvas.height) {
+                    clearInterval(gameArea.interval);   // stop the game loop
+                    window.location.href = "streetview.html";
+                    return;
+                }
+            */
             sprite.update();
-        
+
             let door = underDoor(sprite);
 
             if (door == 3) {
                 clearInterval(gameArea.interval);
-                window.location.href = "streetview.html"
+                lastSave.then(function () {
+                    window.location.href = "streetview.html"
+                });
+                
             }
         }
 
@@ -285,6 +330,27 @@
             let centerX = sprite.x + sprite.width / 2;
             let centerY = sprite.y + sprite.height / 2;
             return tileAt(centerX, centerY);
+        }
+
+        // ---------- Stars ----------
+
+        function collectStar(sprite) {
+            let centerX = sprite.x + sprite.width / 2;
+            let centerY = sprite.y + sprite.height / 2;
+            let col = Math.floor(x / TILE);
+            let row = Math.floor(y / TILE);
+
+            if (room[row][col] == STAR) {
+                room[row][col] = 0;
+                starsCollected++;
+                document.getElementById("star-count").textContent = starsCollected;
+
+                let key = row + "," + col;
+                collected.push(key);
+                lastSave = setDoc(doc(db, "users", userId),
+                    { level2Stars: arrayUnion(key) }
+                    { merge: true });
+            }
         }
 
         // ---------- Inventory ----------
