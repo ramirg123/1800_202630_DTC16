@@ -116,7 +116,7 @@
   <div class="level-grid" id="level-grid"></div>
 
   <script>
-    const TOTAL_LEVELS = 9;
+    const TOTAL_LEVELS = 2;
 
     // Optional: star ratings are read from saved progress if it exists
     let progress = {};
@@ -149,9 +149,15 @@
       btn.appendChild(stars);
 
       btn.setAttribute("aria-label", "Play level " + i + ", " + earned + " of 3 stars");
-      btn.addEventListener("click", () => {
-        window.location.href = "level.html?level=" + i;
-      });
+   const LEVEL_PAGES = {
+  1: "level.html",
+  2: "level2.html",
+  
+};
+
+btn.addEventListener("click", () => {
+  window.location.href = LEVEL_PAGES[i];
+});
 
       grid.appendChild(btn);
     }

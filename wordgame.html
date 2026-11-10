@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Wordle Test</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 0 10px;
+            text-align: center;
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+
+        .tile {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .green {
+            background: #6aaa64;
+            border-color: #6aaa64;
+            color: white;
+        }
+
+        .yellow {
+            background: #c9b458;
+            border-color: #c9b458;
+            color: white;
+        }
+
+        .grey {
+            background: #787c7e;
+            border-color: #787c7e;
+            color: white;
+        }
+
+        input,
+        button {
+            font-size: 18px;
+            padding: 6px 10px;
+            margin: 4px;
+        }
+
+        input {
+            width: 90px;
+            text-transform: uppercase;
+        }
+
+        #keyboard {
+            margin: 10px 0;
+        }
+
+        .key {
+            min-width: 32px;
+            height: 44px;
+            margin: 2px;
+            padding: 0 6px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 4px;
+            background: #d3d6da;
+            cursor: pointer;
+        }
+
+        .key.green {
+            background: #6aaa64;
+            color: white;
+        }
+
+        .key.yellow {
+            background: #c9b458;
+            color: white;
+        }
+
+        .key.grey {
+            background: #787c7e;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>4-Letter Wordle</h1>
+    <div id="board"></div>
+
+    <input id="guess" maxlength="4" autocomplete="off" />
+    <button id="submit">Guess</button>
+    <div id="keyboard"></div>
+    <p id="message"></p>
+    <button id="again" hidden>Play again</button>
+
+    <h2 id="score">Wins: 0 / Played: 0</h2>
+
+    <script>
+        const WORDS = `
+      that with this have from your they will just like what when more were time been some them also than
+      good only into know over make then want back well said very most much even here need year work take
+      made many life down last best such love home look long used same both part come find help high does
+      game give next each show must feel team sure keep ever free left away city days name play real done
+      care week case live full told read hard once mean tell seen stop call took head side came went line
+      less open area kind face hope news book able talk fact mind hand half food body room lost else girl
+      yeah past idea wait move late data soon turn deal form fire plan near list type song word baby road
+      town cost rest wife site land date club film test view star hour king gold role bank park bill rate
+      size step page lord door sign hair code army goal risk card note wall pain rock sale tour fear unit
+      rule ship skin luck trip fish shop foot hall tree wind lake rose hill fund seat ring camp wood farm
+    `.trim().split(/\s+/);
+
+        const MAX_GUESSES = 6;
+        let answer, guessCount, wins = 0, played = 0, over;
+
+        const board = document.getElementById("board");
+        const input = document.getElementById("guess");
+        const message = document.getElementById("message");
+        const againBtn = document.getElementById("again");
+
+        // ----- On-screen keyboard: shows which letters you've used -----
+        const keyboard = document.getElementById("keyboard");
+        const rank = { grey: 1, yellow: 2, green: 3 };
+
+        function buildKeyboard() {
+            keyboard.innerHTML = "";
+            ["qwertyuiop", "asdfghjkl", "+zxcvbnm-"].forEach((letters) => {
+                const row = document.createElement("div");
+                for (const ch of letters) {
+                    const key = document.createElement("button");
+                    key.className = "key";
+                    key.textContent = ch === "+" ? "Enter" : ch === "-" ? "Del" : ch;
+                    key.dataset.letter = ch;
+                    key.onclick = () => pressKey(ch);
+                    row.appendChild(key);
+                }
+                keyboard.appendChild(row);
+            });
+        }
+
+        function pressKey(ch) {
+            if (over) return;
+            if (ch === "+") submitGuess();
+            else if (ch === "-") input.value = input.value.slice(0, -1);
+            else if (input.value.length < 4) input.value += ch;
+        }
+
+        // A key keeps its best colour: green beats yellow beats grey
+        function colourKey(letter, colour) {
+            const key = keyboard.querySelector(`[data-letter="${letter}"]`);
+            const current = key.classList.contains("green") ? "green" : key.classList.contains("yellow") ? "yellow" : key.classList.contains("grey") ? "grey" : null;
+            if (!current || rank[colour] > rank[current]) {
+                key.classList.remove("green", "yellow", "grey");
+                key.classList.add(colour);
+            }
+        }
+
+        function newGame() {
+            answer = WORDS[Math.floor(Math.random() * WORDS.length)];
+            guessCount = 0;
+            over = false;
+            message.textContent = "";
+            againBtn.hidden = true;
+            input.disabled = false;
+            input.value = "";
+            input.focus();
+            buildKeyboard();
+
+            // Empty 6 x 4 grid
+            board.innerHTML = "";
+            for (let r = 0; r < MAX_GUESSES; r++) {
+                const row = document.createElement("div");
+                row.className = "row";
+                for (let c = 0; c < 4; c++) {
+                    const tile = document.createElement("div");
+                    tile.className = "tile";
+                    row.appendChild(tile);
+                }
+                board.appendChild(row);
+            }
+        }
+
+        // Green = right letter, right spot. Yellow = in the word, wrong spot. Grey = not in the word.
+        function colours(guess) {
+            const result = ["grey", "grey", "grey", "grey"];
+            const left = answer.split("");
+            for (let i = 0; i < 4; i++) {
+                if (guess[i] === answer[i]) { result[i] = "green"; left[i] = null; }
+            }
+            for (let i = 0; i < 4; i++) {
+                if (result[i] === "green") continue;
+                const j = left.indexOf(guess[i]);
+                if (j !== -1) { result[i] = "yellow"; left[j] = null; }   // each letter only counts once
+            }
+            return result;
+        }
+
+        function submitGuess() {
+            if (over) return;
+            const guess = input.value.toLowerCase().trim();
+            if (!/^[a-z]{4}$/.test(guess)) { message.textContent = "Enter 4 letters."; return; }
+
+            const tiles = board.children[guessCount].children;
+            colours(guess).forEach((colour, i) => {
+                tiles[i].textContent = guess[i];
+                tiles[i].classList.add(colour);
+                colourKey(guess[i], colour);
+            });
+            guessCount++;
+            input.value = "";
+            message.textContent = "";
+
+            if (guess === answer) endGame(true);
+            else if (guessCount === MAX_GUESSES) endGame(false);
+        }
+
+        function endGame(won) {
+            over = true;
+            played++;
+            if (won) wins++;
+            message.textContent = won
+                ? `You got it in ${guessCount}!`
+                : `Out of guesses. The word was ${answer.toUpperCase()}.`;
+            document.getElementById("score").textContent = `Wins: ${wins} / Played: ${played}`;
+            input.disabled = true;
+            againBtn.hidden = false;
+        }
+
+        document.getElementById("submit").onclick = submitGuess;
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") { e.preventDefault(); submitGuess(); }
+        });
+        againBtn.onclick = newGame;
+
+        newGame();
+    </script>
+</body>
+
+</html>

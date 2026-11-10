@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Level 2</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="styles/levelStyle.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body>
+
+    <!-- Jon's Section Start-->
+    <div class="game-wrapper">
+        <nav class="level-bar">
+
+            <div class="d-flex gap-2" style="justify-self: end;">
+
+                <a href="level-select.html" class="back-btn" aria-label="Back to level select" title="Back">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+
+                <div
+                    class="d-flex align-items-center gap-2 bg-white bg-opacity-10 text-white rounded px-3 py-1.5 fw-bold fs-5">
+                    <img src="images/star.png" alt="" class="w-6 h-6">
+                    <span id="star-count">0</span>/ 3
+                </div>
+
+                <button id="char-btn" class="char-btn" aria-label="Change character" title="Character">
+                    <i class="bi bi-person-fill"></i>
+                </button>
+
+
+                <button class="inventory-btn" aria-label="Inventory" title="Inventory">
+                    <svg viewBox="0 0 64 64" width="30" height="30">
+                        <defs>
+                            <g id="sword" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round">
+                                <polygon points="32,4 37,11 37,40 27,40 27,11" fill="#dfe6ee" />
+                                <line x1="32" y1="10" x2="32" y2="37" stroke="#ffffff" stroke-width="2"
+                                    stroke-linecap="round" />
+                                <rect x="21" y="40" width="22" height="6" rx="3" fill="#f2c230" />
+                                <rect x="29" y="46" width="6" height="10" rx="2" fill="#8b5a2b" />
+                                <circle cx="32" cy="58" r="4" fill="#f2c230" />
+                            </g>
+                        </defs>
+                        <use href="#sword" transform="rotate(-40 32 32)" />
+                        <use href="#sword" transform="rotate(40 32 32)" />
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <div id="game-container"></div>
+        <div id="inventory" class="inventory-overlay" hidden>
+            <div class="inventory-panel" role="dialog" aria-labelledby="inventory-title">
+                <div class="inventory-header">
+                    <h2 id="inventory-title">Inventory</h2>
+                    <button id="close-inventory" class="close-btn" aria-label="Close inventory">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="inventory-grid" id="inventory-grid"></div>
+            </div>
+        </div>
+
+        <div id="char-select" class="inventory-overlay" hidden>
+            <div class="inventory-panel" role="dialog" aria-labelledby="char-title">
+                <div class="inventory-header">
+                    <h2 id="char-title">Choose your character</h2>
+                    <button id="close-char" class="close-btn" aria-label="Close character select">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="char-grid" id="char-grid"></div>
+            </div>
+        </div>
+
+    </div>
+    <!-- Jon's Section End -->
+
+    <script src="./src/characters.js"></script>
+    <script type="module">
+
+        // ---------- Firestore ----------
+
+        import { auth, db } from "./src/firebaseConfig.js";
+        import { onAuthStateChanged } from "firebase/auth";
+        import { doc, getDoc, setDoc, arrayUnion } from "firebase/firestore";
+
+        let sprite
+
+        const STAR = 5;
+
+        const starImage = new Image();
+        starImage.src = "images/star.png"
+
+        let collected = [];
+        let starsCollected = 0;
+        let userId = null;
+        let lastSave = Promise.resolve();
+
+        onAuthStateChanged(auth, async function (user) {
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
+            userId = user.uid;
+
+            const snap = await getDoc(doc(db, "users", userId));
+            if (snap.exists() && snap.data().level2Stars) {
+                collected = snap.data().level2Stars;
+            }
+
+            for (let i = 0; i < collected.length; i++) {
+                let parts = collected[i].split(",");
+                room[Number(parts[0])][Number(parts[1])] = 0;
+            }
+            starsCollected = collected.length;
+
+            startGame();
+        })
+
+        // ---------- Grid ----------
+
+        const TILE = 24;
+        const room = [
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 5, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+            [1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1],
+            [1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+            [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+            [1, 1, 2, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
+            [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 5, 0, 4, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 5, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        ];
+
+        // ---------- Game Start ----------
+
+        function startGame() {
+            sprite = new component(16, 16, "red", 100, 400);
+            gameArea.start();
+            openCharSelect(); // show the character picker when the level starts
+            document.getElementById("star-count").textContent = starsCollected;
+        }
+
+        // ---------- Canvas ----------
+
+        const gameArea = {
+            canvas: document.createElement("canvas"),
+            start: function () {
+                this.canvas.width = 360;
+                this.canvas.height = 600;
+                this.context = this.canvas.getContext("2d");
+                document.getElementById("game-container").appendChild(this.canvas);
+                this.interval = setInterval(updateGameArea, 20);
+                // Movement
+                window.addEventListener('keydown', function (e) {
+                    gameArea.keys = (gameArea.keys || []);
+                    gameArea.keys[e.keyCode] = true;
+                })
+                window.addEventListener('keyup', function (e) {
+                    gameArea.keys[e.keyCode] = false;
+                })
+
+            },
+
+            clear: function () {
+                this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+        }
+
+        // ---------- Tiles ----------
+
+        function drawRoom() {
+            let ctx = gameArea.context;
+            for (let row = 0; row < room.length; row++) {
+                for (let col = 0; col < room[row].length; col++) {
+                    let x = col * TILE;
+                    let y = row * TILE;
+
+                    if (room[row][col] == 1) {
+                        ctx.fillStyle = "gray";
+                        ctx.fillRect(x, y, TILE, TILE);
+
+                    } else if (room[row][col] == 5) {
+                        ctx.drawImage(starImage, x + 4, y + 4, TILE - 8, TILE - 8)
+
+                    } else if (room[row][col] >= 2) {
+                        // Doors
+                        ctx.fillStyle = "#5c3a1e";                        // dark brown frame
+                        ctx.fillRect(x, y, TILE, TILE);
+                        ctx.fillStyle = "#8b5a2b";                        // lighter brown door
+                        ctx.fillRect(x + 4, y + 4, TILE - 8, TILE - 4);
+                        ctx.fillStyle = "#6b4423";                        // plank lines
+                        ctx.fillRect(x + TILE / 2 - 1, y + 4, 2, TILE - 4);
+                        ctx.fillStyle = "#f2c230";                        // gold knob
+                        ctx.fillRect(x + TILE - 12, y + TILE / 2, 4, 4);
+                    }
+                }
+            }
+        }
+
+        // ---------- Movement ----------
+
+        function setTouchPos(e) {
+            let rect = gameArea.canvas.getBoundingClientRect();
+            let scaleX = gameArea.canvas.width / rect.width;
+            let scaleY = gameArea.canvas.height / rect.height;
+            gameArea.x = (e.touches[0].clientX - rect.left) * scaleX;
+            gameArea.y = (e.touches[0].clientY - rect.top) * scaleY;
+        }
+
+        gameArea.canvas.addEventListener('touchstart', function (e) {
+            e.preventDefault();
+            setTouchPos(e);
+        }, { passive: false });
+
+        gameArea.canvas.addEventListener('touchmove', function (e) {
+            e.preventDefault();
+            setTouchPos(e);
+        }, { passive: false });
+
+
+        function component(width, height, colour, x, y, type) {
+            this.type = type;
+            if (type == "image") {
+                this.image = new Image();
+                this.image.src = colour;
+            }
+            this.width = width;
+            this.height = height;
+            this.speedX = 0;
+            this.speedY = 0;
+            this.x = x;
+            this.y = y;
+
+            this.update = function () {
+                let ctx = gameArea.context;
+                if (this.type == "image") {
+                    ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+                } else {
+                    ctx.fillStyle = colour;
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                }
+            }
+
+            this.newPos = function () {
+                this.x += this.speedX;
+                if (hitsAnyWall(this)) { this.x -= this.speedX; }
+
+                this.y += this.speedY;
+                if (hitsAnyWall(this)) { this.y -= this.speedY; }
+            }
+        }
+
+        function updateGameArea() {
+            gameArea.clear();
+            drawRoom();
+            sprite.speedX = 0;
+            sprite.speedY = 0;
+            if (gameArea.keys && gameArea.keys[37]) { sprite.speedX = -4; }
+            if (gameArea.keys && gameArea.keys[39]) { sprite.speedX = 4; }
+            if (gameArea.keys && gameArea.keys[38]) { sprite.speedY = -4; }
+            if (gameArea.keys && gameArea.keys[40]) { sprite.speedY = 4; }
+
+            sprite.newPos();
+
+            collectStar(sprite);
+
+            sprite.update();
+
+            let door = underDoor(sprite);
+
+            if (door == 3) {
+                clearInterval(gameArea.interval);
+                lastSave.then(function () {
+                    window.location.href = "streetview.html"
+                });
+
+            }
+        }
+
+        // ---------- Wall Collision ----------
+
+        function isWallAt(x, y) {
+            let col = Math.floor(x / TILE);
+            let row = Math.floor(y / TILE);
+            if (row < 0) return true;                   // top door: blocked (that's the entrance)
+            if (row >= room.length) return false;   // bottom door: open, leads out of the maze
+            return room[row][col] == 1;
+        }
+
+        function hitsAnyWall(sprite) {
+            let left = sprite.x;
+            let right = sprite.x + sprite.width - 1;
+            let top = sprite.y;
+            let bottom = sprite.y + sprite.height - 1;
+
+            return isWallAt(left, top) || isWallAt(right, top) ||
+                isWallAt(left, bottom) || isWallAt(right, bottom);
+        }
+
+        // ---------- Doors ----------
+
+        function tileAt(x, y) {
+            let col = Math.floor(x / TILE);
+            let row = Math.floor(y / TILE);
+            return room[row][col];
+        }
+
+        function underDoor(sprite) {
+            let centerX = sprite.x + sprite.width / 2;
+            let centerY = sprite.y + sprite.height / 2;
+            return tileAt(centerX, centerY);
+        }
+
+        // ---------- Stars ----------
+
+        function collectStar(sprite) {
+            let centerX = sprite.x + sprite.width / 2;
+            let centerY = sprite.y + sprite.height / 2;
+            let col = Math.floor(centerX / TILE);
+            let row = Math.floor(centerY / TILE);
+
+            if (room[row][col] == STAR) {
+                room[row][col] = 0;
+                starsCollected++;
+                document.getElementById("star-count").textContent = starsCollected;
+
+                let key = row + "," + col;
+                collected.push(key);
+                lastSave = setDoc(doc(db, "users", userId),
+                    { level2Stars: arrayUnion(key) },
+                    { merge: true });
+            }
+        }
+
+        // ---------- Inventory ----------
+
+        const inventory = document.getElementById("inventory");
+        const inventoryGrid = document.getElementById("inventory-grid");
+        const SLOT_COUNT = 12;
+
+        for (let i = 0; i < SLOT_COUNT; i++) {
+            const slot = document.createElement("div");
+            slot.className = "inventory-slot";
+            inventoryGrid.appendChild(slot);
+        }
+        for (let i = 0; i < SLOT_COUNT; i++) {
+            const slot = document.createElement("div");
+            slot.className = "inventory-slot";
+            inventoryGrid.appendChild(slot);
+        }
+
+        function openInventory() {
+            if (!inventory.hidden) return;
+            inventory.hidden = false;
+            clearInterval(gameArea.interval);   // pause the game
+            gameArea.keys = [];               // stop any held movement
+        }
+
+        function closeInventory() {
+            if (inventory.hidden) return;
+            inventory.hidden = true;
+            gameArea.interval = setInterval(updateGameArea, 20); // resume
+        }
+
+        document.querySelector(".inventory-btn").addEventListener("click", openInventory);
+        document.getElementById("close-inventory").addEventListener("click", closeInventory);
+
+        // ---------- Characters ---------- (drawing code is in src/characters.js)
+        let selectedCharacter = getSavedCharacter();
+
+        // ---------- Character select popup ----------
+        const charSelect = document.getElementById("char-select");
+        const charGrid = document.getElementById("char-grid");
+
+        characters.forEach(function (character) {
+            const option = document.createElement("button");
+            option.className = "char-option";
+            if (character === selectedCharacter) option.classList.add("selected");
+
+            const preview = document.createElement("canvas");
+            preview.width = 64;
+            preview.height = 50;
+            drawCharacter(preview.getContext("2d"), character, 0, 0, 50);
+
+            const label = document.createElement("span");
+            label.textContent = character.name;
+
+            option.appendChild(preview);
+            option.appendChild(label);
+
+            option.addEventListener("click", function () {
+                selectedCharacter = character;
+                saveCharacter(character);
+                document.querySelectorAll(".char-option").forEach(function (o) {
+                    o.classList.remove("selected");
+                });
+                option.classList.add("selected");
+                closeCharSelect();
+            });
+
+            charGrid.appendChild(option);
+        });
+
+        function openCharSelect() {
+            if (!charSelect.hidden) return;
+            charSelect.hidden = false;
+            clearInterval(gameArea.interval);   // pause the game
+            gameArea.key = false;               // stop any held movement
+        }
+
+        function closeCharSelect() {
+            if (charSelect.hidden) return;
+            charSelect.hidden = true;
+            gameArea.interval = setInterval(updateGameArea, 20); // resume
+        }
+
+        document.getElementById("char-btn").addEventListener("click", openCharSelect);
+        document.getElementById("close-char").addEventListener("click", closeCharSelect);
+        document.querySelector(".inventory-btn").addEventListener("click", openInventory);
+        document.getElementById("close-inventory").addEventListener("click", closeInventory);
+
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                closeInventory();
+                closeCharSelect();
+            }
+        });
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") closeInventory();
+        });
+
+
+    </script>
+</body>
+
+</html>
