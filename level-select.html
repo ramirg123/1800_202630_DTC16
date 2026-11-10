@@ -150,15 +150,13 @@
 
       btn.setAttribute("aria-label", "Play level " + i + ", " + earned + " of 3 stars");
    const LEVEL_PAGES = {
-  1: "level.html",
-  2: "level2.html",
+   1: "level.html",
+   2: "level2.html",
   
-};
-
-btn.addEventListener("click", () => {
-  window.location.href = LEVEL_PAGES[i];
-});
-
+   };
+  btn.addEventListener("click", () => {
+     window.location.href = LEVEL_PAGES[i];
+  });
       grid.appendChild(btn);
     }
   </script>
