@@ -77,28 +77,36 @@
       cursor: pointer;
       box-shadow: 0 6px 0 #3b1a5e;
       transition: transform 0.08s, box-shadow 0.08s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
     }
     .level-btn:hover { background: #7d44bd; }
     .level-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #3b1a5e; }
     .level-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
 
-    .level-btn.locked {
-      background: #3a1d55;
-      color: rgba(255, 255, 255, 0.35);
-      cursor: not-allowed;
-      box-shadow: 0 6px 0 #24103a;
+    .stars {
+      display: flex;
+      gap: 2px;
+      font-family: system-ui, sans-serif;
+      font-size: 18px;
+      line-height: 1;
     }
-    .level-btn.locked:active { transform: none; }
+    .star { color: rgba(255, 255, 255, 0.25); }
+    .star.earned { color: #f2c230; }
 
     @media (max-width: 420px) {
       .level-grid { grid-template-columns: repeat(3, 84px); gap: 14px; }
       .level-btn { height: 84px; font-size: 30px; }
+      .stars { font-size: 14px; }
     }
   </style>
 </head>
 <body>
   <div class="top-bar">
-    <a href="index.html" class="back-btn">Back</a>
+    <a href="main.html" class="back-btn">Back</a>
     <div class="coins">⬢ <span id="coin-count">0</span></div>
     <div class="spacer"></div>
   </div>
@@ -110,11 +118,10 @@
   <script>
     const TOTAL_LEVELS = 9;
 
-    // Highest level the player has unlocked. Defaults to 1 until your
-    // game saves progress (e.g. localStorage.setItem("unlockedLevel", 2)).
-    let unlocked = 1;
+    // Optional: star ratings are read from saved progress if it exists
+    let progress = {};
     try {
-      unlocked = parseInt(localStorage.getItem("unlockedLevel")) || 1;
+      progress = JSON.parse(localStorage.getItem("progress")) || {};
     } catch (e) {}
 
     const grid = document.getElementById("level-grid");
@@ -123,19 +130,28 @@
       const btn = document.createElement("button");
       btn.className = "level-btn";
 
-      if (i <= unlocked) {
-        btn.textContent = i;
-        btn.setAttribute("aria-label", "Play level " + i);
-        // level.html can read this with: new URLSearchParams(location.search).get("level")
-        btn.addEventListener("click", () => {
-          window.location.href = "level.html?level=" + i;
-        });
-      } else {
-        btn.textContent = "🔒";
-        btn.classList.add("locked");
-        btn.disabled = true;
-        btn.setAttribute("aria-label", "Level " + i + " is locked");
+      const num = document.createElement("span");
+      num.textContent = i;
+      btn.appendChild(num);
+
+      const data = progress["level" + i];
+      const earned = (data && data.completed) ? (data.stars || 0) : 0;
+
+      // Star row always shown; stars fill in once earned
+      const stars = document.createElement("div");
+      stars.className = "stars";
+      for (let s = 1; s <= 3; s++) {
+        const star = document.createElement("span");
+        star.className = "star" + (s <= earned ? " earned" : "");
+        star.textContent = "★";
+        stars.appendChild(star);
       }
+      btn.appendChild(stars);
+
+      btn.setAttribute("aria-label", "Play level " + i + ", " + earned + " of 3 stars");
+      btn.addEventListener("click", () => {
+        window.location.href = "level.html?level=" + i;
+      });
 
       grid.appendChild(btn);
     }
