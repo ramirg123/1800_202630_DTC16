@@ -16,8 +16,6 @@
     "vite": "^7.1.9"
   },
   "allowScripts": {
-    "esbuild@0.28.2": true,
-    "@firebase/util@1.15.3": true,
-    "protobufjs@7.6.6": true
+    "esbuild@0.28.2": true
   }
 }
