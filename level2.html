@@ -89,12 +89,13 @@
 
         // ---------- Firestore ----------
 
-        import { auth, db } from "./src/firebaseConfig.js";
-        import { onAuthStateChanged } from "firebase/auth";
+        import { db } from "./src/firebaseConfig.js";
         import { doc, getDoc, setDoc, arrayUnion } from "firebase/firestore";
+        import { onAuthReady } from "./src/authentication.js";
 
         let sprite
 
+        const STAR_FIELD = "level2Stars";
         const STAR = 5;
 
         const starImage = new Image();
@@ -105,7 +106,7 @@
         let userId = null;
         let lastSave = Promise.resolve();
 
-        onAuthStateChanged(auth, async function (user) {
+        onAuthReady(async function (user) {
             if (!user) {
                 window.location.href = "login.html";
                 return;
@@ -113,8 +114,8 @@
             userId = user.uid;
 
             const snap = await getDoc(doc(db, "users", userId));
-            if (snap.exists() && snap.data().level2Stars) {
-                collected = snap.data().level2Stars;
+            if (snap.exists() && snap.data()[STAR_FIELD]) {
+                collected = snap.data()[STAR_FIELD];
             }
 
             for (let i = 0; i < collected.length; i++) {
@@ -126,7 +127,7 @@
             startGame();
         })
 
-        // ---------- Game Room ----------
+        // ---------- Grid ----------
 
         const TILE = 24;
         const room = [
@@ -156,6 +157,8 @@
             [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ];
+
+        // ---------- Game Start ----------
 
         function startGame() {
             sprite = new component(16, 16, "red", 100, 400);
@@ -190,7 +193,7 @@
             }
         }
 
-        // ---------- Walls ----------
+        // ---------- Tiles ----------
 
         function drawRoom() {
             let ctx = gameArea.context;
@@ -351,7 +354,7 @@
                 let key = row + "," + col;
                 collected.push(key);
                 lastSave = setDoc(doc(db, "users", userId),
-                    { level2Stars: arrayUnion(key) },
+                    { [STAR_FIELD]: arrayUnion(key) },
                     { merge: true });
             }
         }

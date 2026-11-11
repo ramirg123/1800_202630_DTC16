@@ -1,6 +1,8 @@
-// ===== Characters: shared by level.html and streetview.html =====
+// ===== Characters: shared by level.html, streetview.html and memory.html =====
 
-// Each letter is one pixel: H hair, S skin, E eyes, T shirt, P pants, B shoes, R speedo, . empty
+// Each letter is one pixel: H hair, S skin, E eyes, T shirt, P pants, B shoes, R speedo,
+// K turban, F turban fold, L lipstick, C cap, D cap brim, Y goatee,
+// G jersey number/trim, . empty
 const PIXEL_TEMPLATE = [
     "..HHHHHH..",
     ".HHHHHHHH.",
@@ -14,29 +16,71 @@ const PIXEL_TEMPLATE = [
     "..BB..BB.."
 ];
 
+// Shirtless body with a speedo (R), used by Shuhan
+const SPEEDO_TEMPLATE = [
+    "..HHHHHH..",
+    ".HHHHHHHH.",
+    ".HSSSSSSH.",
+    ".SSESSESS.",
+    ".SSSSSSSS.",
+    "..SSSSSS..",
+    ".SSSSSSSS.",
+    "SSSSSSSSSS",
+    "..RRRRRR..",
+    "..SS..SS.."
+];
+
+// Long hair past the shoulders and lipstick (L), used by Elika
+const LONG_HAIR_TEMPLATE = [
+    "..HHHHHH..",
+    ".HHHHHHHH.",
+    "HHSSSSSSHH",
+    "HSSESSESSH",
+    "HSSSSSSSSH",
+    "HHSSLLSSHH",
+    "HTTTTTTTTH",
+    "STTTTTTTTS",
+    "..PPPPPP..",
+    "..BB..BB.."
+];
+
+// Turban instead of hair, used by Birjot
+const TURBAN_TEMPLATE = [
+    "..KKKKKK..",
+    ".KFKKKKFK.",
+    ".KKFKKFKK.",
+    ".SSESSESS.",
+    ".SSSSSSSS.",
+    "..SSSSSS..",
+    ".TTTTTTTT.",
+    "STTTTTTTTS",
+    "..PPPPPP..",
+    "..BB..BB.."
+];
+
+// Football player: cap, goatee, jersey with "11" on the front, used by JSN
+const FOOTBALL_TEMPLATE = [
+    "..CCCCCC..",
+    ".CCCCCCCC.",
+    ".DDDDDDDD.",
+    ".SSESSESS.",
+    ".SSSSSSSS.",
+    "..SSYYSS..",
+    ".TTGTTGTT.",
+    "STTGTTGTTS",
+    "..PPPPPP..",
+    "..BB..BB.."
+];
+
 const characters = [
     { name: "Ninja", ninja: true },
-    { name: "Ember", colours: { H: "#e8562a", S: "#f6c9a0", E: "#1a1a1a", T: "#3b5bdb", P: "#2b2b2c", B: "#5c3a1e" } },
-    { name: "Moss", colours: { H: "#3f7d33", S: "#e0ac80", E: "#1a1a1a", T: "#f2c230", P: "#4a4a4a", B: "#222222" } },
-    { name: "Frost", colours: { H: "#e8eef5", S: "#c79a76", E: "#2563eb", T: "#7c3aed", P: "#1f2937", B: "#111111" } },
-    { name: "Coal", colours: { H: "#151515", S: "#8d5a3b", E: "#ffffff", T: "#dc2626", P: "#1f2937", B: "#111111" } },
-    {
-        name: "Michael",
-        // shirtless with a red speedo
-        template: [
-            "..HHHHHH..",
-            ".HHHHHHHH.",
-            ".HSSSSSSH.",
-            ".SSESSESS.",
-            ".SSSSSSSS.",
-            "..SSSSSS..",
-            ".SSSSSSSS.",
-            "SSSSSSSSSS",
-            "..RRRRRR..",
-            "..SS..SS.."
-        ],
-        colours: { H: "#f5c518", S: "#f1c7a4", E: "#1a1a1a", R: "#d62828" }
-    }
+    { name: "Jon", colours: { H: "#e8562a", S: "#f6c9a0", E: "#1a1a1a", T: "#3b5bdb", P: "#2b2b2c", B: "#5c3a1e" } },
+    { name: "Ramir", colours: { H: "#151515", S: "#c99a6e", E: "#1a1a1a", T: "#f2c230", P: "#4a4a4a", B: "#222222" } },
+    { name: "Shuhan", template: SPEEDO_TEMPLATE, colours: { H: "#151515", S: "#e6b88f", E: "#1a1a1a", R: "#2563eb" } },
+    { name: "Elika", template: LONG_HAIR_TEMPLATE, colours: { H: "#151515", S: "#f3cfae", E: "#1a1a1a", L: "#d6204a", T: "#262626", P: "#151515", B: "#c81e3a" } },
+    { name: "Michael", colours: { H: "#f5c518", S: "#f1c7a4", E: "#1a1a1a", T: "#7c3aed", P: "#151515", B: "#5c3a1e" } },
+    { name: "Birjot", template: TURBAN_TEMPLATE, colours: { K: "#151515", F: "#3a3a3a", S: "#c99a6e", E: "#1a1a1a", T: "#9ca3af", P: "#151515", B: "#e5e5e5" } },
+    { name: "JSN", template: FOOTBALL_TEMPLATE, colours: { C: "#2b2b2b", D: "#1a1a1a", S: "#c68f63", E: "#1a1a1a", Y: "#1a1a1a", T: "#1b2a4a", G: "#7bd321", P: "#1b2a4a", B: "#111111" } }
 ];
 
 function drawNinja(ctx, x, y, size) {
