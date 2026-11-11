@@ -126,7 +126,7 @@
             startGame();
         })
 
-        // ---------- Game Room ----------
+        // ---------- Grid ----------
 
         const TILE = 24;
         const room = [
@@ -156,6 +156,8 @@
             [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ];
+
+        // ---------- Game Start ----------
 
         function startGame() {
             sprite = new component(16, 16, "red", 100, 400);
@@ -190,7 +192,7 @@
             }
         }
 
-        // ---------- Walls ----------
+        // ---------- Tiles ----------
 
         function drawRoom() {
             let ctx = gameArea.context;
