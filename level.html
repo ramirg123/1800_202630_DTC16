@@ -149,6 +149,7 @@
 
       let sprite;
 
+      const STAR_FIELD = "level3Stars";
       const STAR = 5;
 
       const starImage = new Image();
@@ -167,8 +168,8 @@
         userId = user.uid;
 
         const snap = await getDoc(doc(db, "users", userId));
-        if (snap.exists() && snap.data().level2Stars) {
-          collected = snap.data().level2Stars;
+        if (snap.exists() && snap.data()[STAR_FIELD]) {
+          collected = snap.data()[STAR_FIELD];
         }
 
         for (let i = 0; i < collected.length; i++) {
@@ -425,7 +426,7 @@
           collected.push(key);
           lastSave = setDoc(
             doc(db, "users", userId),
-            { level2Stars: arrayUnion(key) },
+            { [STAR_FIELD]: arrayUnion(key) },
             { merge: true },
           );
         }
