@@ -89,9 +89,9 @@
 
         // ---------- Firestore ----------
 
-        import { auth, db } from "./src/firebaseConfig.js";
-        import { onAuthStateChanged } from "firebase/auth";
+        import { db } from "./src/firebaseConfig.js";
         import { doc, getDoc, setDoc, arrayUnion } from "firebase/firestore";
+        import { onAuthReady } from "./src/authentication.js";
 
         let sprite
 
@@ -105,7 +105,7 @@
         let userId = null;
         let lastSave = Promise.resolve();
 
-        onAuthStateChanged(auth, async function (user) {
+        onAuthReady(async function (user) {
             if (!user) {
                 window.location.href = "login.html";
                 return;
