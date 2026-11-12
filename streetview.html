@@ -77,7 +77,6 @@
         }
 
         async function nextRound() {
-            if (round === ROUNDS) { round = 0; score = 0; }   // play again
             round++;
             nextBtn.hidden = true;
             message.textContent = "";
@@ -115,7 +114,11 @@
 
             if (round === ROUNDS) {
                 message.textContent += ` Final score: ${score}/${ROUNDS}.`;
-                nextBtn.textContent = "Play again";
+                message.textContent += " Returning to the level...";
+                setTimeout(function () {
+                    window.location.href = "level2.html";
+                }, 3000);
+                return;
             } else {
                 nextBtn.textContent = "Next";
             }

@@ -110,7 +110,26 @@
 
     <h2 id="score">Wins: 0 / Played: 0</h2>
 
-    <script>
+    <script type="module">
+
+        import { db } from "./src/firebaseConfig.js";
+        import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+        import { onAuthReady } from "./src/authentication.js";
+
+        const params = new URLSearchParams(window.location.search);
+        const level = params.get("level");
+        const door = params.get("door");
+        let userId = null;
+
+        onAuthReady(function (user) {
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
+            userId = user.uid;
+        });
+
+
         const WORDS = `
       that with this have from your they will just like what when more were time been some them also than
       good only into know over make then want back well said very most much even here need year work take
@@ -237,6 +256,21 @@
                 : `Out of guesses. The word was ${answer.toUpperCase()}.`;
             document.getElementById("score").textContent = `Wins: ${wins} / Played: ${played}`;
             input.disabled = true;
+
+            if (door) {
+                message.textContent += " Returning to the level...";
+                let save = Promise.resolve();
+                if (won) {
+                    save = updateDoc(doc(db, "users", userId), { "run.openDoors": arrayUnion(door) });
+                }
+                save.finally(function () {
+                    setTimeout(function () {
+                        window.location.href = "level2.html?level=" + level + "&resume=1";
+                    }, 2000);
+                });
+                return;
+            }
+
             againBtn.hidden = false;
         }
 
@@ -247,6 +281,7 @@
         againBtn.onclick = newGame;
 
         newGame();
+
     </script>
 </body>
 

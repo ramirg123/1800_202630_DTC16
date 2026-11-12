@@ -4,12 +4,13 @@ import { LEVELS } from "./levels.js";
 // ---------- Firestore ----------
 
 import { db } from "./firebaseConfig.js";
-import { doc, getDoc, setDoc, arrayUnion } from "firebase/firestore";
+import { doc, getDoc, setDoc, arrayUnion, updateDoc } from "firebase/firestore";
 import { onAuthReady } from "./authentication.js";
 
 let sprite
 
 const STAR = 5;
+const OPEN_DOOR = 6;
 
 const starImage = new Image();
 starImage.src = "images/star.png"
@@ -17,6 +18,8 @@ starImage.src = "images/star.png"
 let collected = [];
 let starsCollected = 0;
 let userId = null;
+let userRef = null;
+let startX, startY;
 let lastSave = Promise.resolve();
 
 onAuthReady(async function (user) {
@@ -26,16 +29,31 @@ onAuthReady(async function (user) {
     }
     userId = user.uid;
 
-    const snap = await getDoc(doc(db, "users", userId));
-    if (snap.exists() && snap.data()[STAR_FIELD]) {
-        collected = snap.data()[STAR_FIELD];
+    userRef = doc(db, "users", userId);
+    const snap = await getDoc(userRef);
+    let run = snap.exists() ? snap.data().run : null;
+
+    if (!resuming || !run || run.level != levelNumber) {
+        run = { level: levelNumber, startedAt: Date.now(), stars: [], openDoors: [] };
+        await updateDoc(userRef, { run: run });
     }
 
-    for (let i = 0; i < collected.length; i++) {
-        let parts = collected[i].split(",");
+    for (let i = 0; i < run.stars.length; i++) {
+        let parts = run.stars[i].split(",");
         room[Number(parts[0])][Number(parts[1])] = 0;
     }
-    starsCollected = collected.length;
+    for (let i = 0; i < run.openDoors.length; i++) {
+        let parts = run.openDoors[i].split(",");
+        room[Number(parts[0])][Number(parts[1])] = OPEN_DOOR;
+    }
+    starsCollected = run.stars.length;
+
+    startX = level.start.x;
+    startY = level.start.y;
+    if (resuming && run.returnX != undefined) {
+        startX = run.returnX;
+        startY = run.returnY;
+    }
 
     startGame();
 })
@@ -43,7 +61,9 @@ onAuthReady(async function (user) {
 // ---------- Level ----------
 
 const TILE = 24;
-const levelNumber = new URLSearchParams(window.location.search).get("level");
+const params = new URLSearchParams(window.location.search);
+const levelNumber = params.get("level");
+const resuming = params.get("resume") == "1";
 const level = LEVELS[levelNumber];
 
 if (!level) {
@@ -52,12 +72,13 @@ if (!level) {
 }
 
 const room = level.room;
+
 const STAR_FIELD = "level" + levelNumber + "Stars";
 
 // ---------- Game Start ----------
 
 function startGame() {
-    sprite = new component(16, 16, "red", level.start.x, level.start.y);
+    sprite = new component(16, 16, "red", startX, startY);
     gameArea.start();
     openCharSelect(); // show the character picker when the level starts
     document.getElementById("star-count").textContent = starsCollected;
@@ -98,22 +119,31 @@ function drawRoom() {
             let x = col * TILE;
             let y = row * TILE;
 
+            // ---------- Walls ----------
             if (room[row][col] == 1) {
                 ctx.fillStyle = "gray";
                 ctx.fillRect(x, y, TILE, TILE);
 
+                // ---------- Stars ----------
             } else if (room[row][col] == 5) {
                 ctx.drawImage(starImage, x + 4, y + 4, TILE - 8, TILE - 8)
 
-            } else if (room[row][col] >= 2) {
-                // Doors
-                ctx.fillStyle = "#5c3a1e";                        // dark brown frame
+                // ---------- Closed Doors ----------
+            } else if (room[row][col] == OPEN_DOOR) {
+                ctx.fillStyle = "#5c3a1e";
                 ctx.fillRect(x, y, TILE, TILE);
-                ctx.fillStyle = "#8b5a2b";                        // lighter brown door
+                ctx.fillStyle = "#2b2b2c";
                 ctx.fillRect(x + 4, y + 4, TILE - 8, TILE - 4);
-                ctx.fillStyle = "#6b4423";                        // plank lines
+
+                // ---------- Open Doors ----------
+            } else if (room[row][col] >= 2) {
+                ctx.fillStyle = "#5c3a1e";
+                ctx.fillRect(x, y, TILE, TILE);
+                ctx.fillStyle = "#8b5a2b";
+                ctx.fillRect(x + 4, y + 4, TILE - 8, TILE - 4);
+                ctx.fillStyle = "#6b4423";
                 ctx.fillRect(x + TILE / 2 - 1, y + 4, 2, TILE - 4);
-                ctx.fillStyle = "#f2c230";                        // gold knob
+                ctx.fillStyle = "#f2c230";
                 ctx.fillRect(x + TILE - 12, y + TILE / 2, 4, 4);
             }
         }
@@ -183,6 +213,9 @@ function updateGameArea() {
     if (gameArea.keys && gameArea.keys[38]) { sprite.speedY = -4; }
     if (gameArea.keys && gameArea.keys[40]) { sprite.speedY = 4; }
 
+    let prevX = sprite.x;
+    let prevY = sprite.y;
+
     sprite.newPos();
 
     collectStar(sprite);
@@ -194,8 +227,12 @@ function updateGameArea() {
 
     if (page) {
         clearInterval(gameArea.interval);
+        let col = Math.floor((sprite.x + sprite.width / 2) / TILE);
+        let row = Math.floor((sprite.y + sprite.height / 2) / TILE);
+
+        lastSave = updateDoc(userRef, { "run.returnX": prevX, "run.returnY": prevY });
         lastSave.finally(function () {
-            window.location.href = page;
+            window.location.href = page + "?level=" + levelNumber + "&door=" + row + "," + col;
         });
     }
 }
@@ -249,9 +286,7 @@ function collectStar(sprite) {
 
         let key = row + "," + col;
         collected.push(key);
-        lastSave = setDoc(doc(db, "users", userId),
-            { [STAR_FIELD]: arrayUnion(key) },
-            { merge: true });
+        lastSave = updateDoc(userRef, { "run.stars": arrayUnion(key) });
     }
 }
 

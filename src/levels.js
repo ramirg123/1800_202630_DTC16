@@ -28,6 +28,6 @@ export const LEVELS = {
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ],
         start: { x: 100, y: 400 },
-        doors: { 2: "wordgame.html", 3: "streetview.html" }
+        doors: { 2: "wordgame.html", 3: "wordgame.html", 4: "wordgame.html" }
     }
 };
