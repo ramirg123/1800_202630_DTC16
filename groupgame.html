@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            max-width: 360px;
+            margin: 0 auto;
+        }
+
+        .word {
+            padding: 14px 4px;
+            font-size: 13px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            background: #efefe6;
+        }
+
+        .word.selected {
+            background: #5a594e;
+            color: white;
+        }
+
+        .solved-row {
+            max-width: 360px;
+            margin: 0 auto 6px;
+            padding: 10px;
+            border-radius: 6px;
+            background: #f9df6d;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Four by Four</h1>
+    <p>Find four groups of four!</p>
+
+    <div id="solved"></div>
+    <div id="board"></div>
+
+    <p id="mistakes"></p>
+    <p id="message"></p>
+
+    <button id="deselect">Deselect All</button>
+    <button id="submit">Submit</button>
+
+    <script type="module">
+
+        const ROUNDS = [
+            [
+                { name: "Planets", words: ["MARS", "VENUS", "EARTH", "SATURN"] },
+                { name: "Card games", words: ["POKER", "SNAP", "RUMMY", "BRIDGE"] },
+                { name: "Things with keys", words: ["PIANO", "MAP", "LOCK", "KEYBOARD"] },
+                { name: "___ball", words: ["BASKET", "FOOT", "SNOW", "DODGE"] }
+            ],
+            [
+                { name: "Coffee orders", words: ["LATTE", "MOCHA", "ESPRESSO", "CORTADO"] },
+                { name: "Dog breeds", words: ["BOXER", "POODLE", "BEAGLE", "PUG"] },
+                { name: "Pirate gear", words: ["HOOK", "PARROT", "PATCH", "PLANK"] },
+                { name: "Shades of brown", words: ["TAN", "BEIGE", "CHESTNUT", "UMBER"] }
+            ],
+            [
+                { name: "Chess pieces", words: ["KING", "QUEEN", "ROOK", "BISHOP"] },
+                { name: "Fruits", words: ["APPLE", "MANGO", "PLUM", "KIWI"] },
+                { name: "Things with a shell", words: ["EGG", "TURTLE", "SNAIL", "TACO"] },
+                { name: "Card words", words: ["ACE", "JACK", "JOKER", "DECK"] }
+            ],
+            [
+                { name: "Programming languages", words: ["PYTHON", "JAVA", "RUBY", "SWIFT"] },
+                { name: "Snakes", words: ["COBRA", "VIPER", "MAMBA", "ADDER"] },
+                { name: "Gemstones", words: ["OPAL", "EMERALD", "SAPPHIRE", "JADE"] },
+                { name: "Weather", words: ["RAIN", "HAIL", "FOG", "SLEET"] }
+            ],
+            [
+                { name: "Kitchen tools", words: ["WHISK", "LADLE", "SPATULA", "TONGS"] },
+                { name: "Instruments", words: ["DRUM", "FLUTE", "CELLO", "HARP"] },
+                { name: "___fish", words: ["CAT", "SWORD", "STAR", "JELLY"] },
+                { name: "Things with strings", words: ["KITE", "YOYO", "PUPPET", "RACKET"] }
+            ],
+        ]
+
+        const MAX_MISTAKES = 4;
+        let groups, selected, solvedCount, mistakes, over;
+
+        const board = document.getElementById("board")
+        const solvedArea = document.getElementById("solvedArea")
+        const message = document.getElementById("message")
+        const mistakesText = document.getElementById("mistakesText")
+
+        function newgame() {
+            groups = ROUNDS[Math.floor(Math.random() * ROUNDS.length)];
+            selected = []
+            solvedCount = 0;
+            mistakes = MAX_MISTAKES;
+            over = false;
+            message.textContent = "";
+            solvedArea.innerHTML = "";
+            showMistakes();
+
+            let allWords = [];
+            for (let i = 0; i < groups.length; i++) {
+                for (let j = 0; j < groups[i].words.length; j++) {
+                    allWords.push(groups[i].words[j]);
+                }
+            }
+            shuffle(allWords);
+
+            board.innerHTML = "";
+            for (let i = 0; i < allWords.length; i++) {
+                const btn = document.createElement("button");
+                btn.className = "word";
+                btn.textContent = allWords[i];
+                btn.onclick = function () { toggleWord(btn); };
+                board.appendChild(btn);
+            }
+        }
+
+        function showMistakes() {
+            mistakesText.textContent = "Mistakes remaining: " + mistakes;
+        }
+
+        function shuffle(list) {
+            for (let i = list.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                let temp = list[i];
+                list[i] = list[j];
+                list[j] = temp;
+            }
+        }
+
+    </script>
+</body>
+
+</html>
