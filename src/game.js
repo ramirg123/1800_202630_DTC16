@@ -73,6 +73,13 @@ if (!level) {
 
 const room = level.room;
 
+let totalStars = 0;
+for (let row = 0; row < room.length; row++) {
+    for (let col = 0; col < room.length; col++) {
+        if (room[row][col] == STAR) totalStars++;
+    }
+}
+
 const STAR_FIELD = "level" + levelNumber + "Stars";
 
 // ---------- Game Start ----------
@@ -81,6 +88,7 @@ function startGame() {
     sprite = new component(16, 16, "red", startX, startY);
     gameArea.start();
     openCharSelect(); // show the character picker when the level starts
+    document.getElementById("star-total").textContent = totalStars;
     document.getElementById("star-count").textContent = starsCollected;
 }
 
