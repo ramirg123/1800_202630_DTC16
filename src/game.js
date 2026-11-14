@@ -87,7 +87,7 @@ const STAR_FIELD = "level" + levelNumber + "Stars";
 function startGame() {
     sprite = new component(16, 16, "red", startX, startY);
     gameArea.start();
-    openCharSelect(); // show the character picker when the level starts
+    openCharSelect();
     document.getElementById("star-total").textContent = totalStars;
     document.getElementById("star-count").textContent = starsCollected;
 }
