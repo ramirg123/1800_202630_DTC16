@@ -107,15 +107,20 @@
 
   <div class="level-grid" id="level-grid"></div>
 
-  <script>
-    const TOTAL_LEVELS = 9;
+  <script type="module">
+    import { LEVELS } from "./src/levels.js";
 
-    // Highest level the player has unlocked. Defaults to 1 until your
-    // game saves progress (e.g. localStorage.setItem("unlockedLevel", 2)).
-    let unlocked = 1;
-    try {
-      unlocked = parseInt(localStorage.getItem("unlockedLevel")) || 1;
-    } catch (e) {}
+    const TOTAL_LEVELS = Object.keys(LEVELS).length;
+
+    // // Highest level the player has unlocked. Defaults to 1 until your
+    // // game saves progress (e.g. localStorage.setItem("unlockedLevel", 2)).
+    // let unlocked = 1;
+    // try {
+    //   unlocked = parseInt(localStorage.getItem("unlockedLevel")) || 1;
+    // } catch (e) {}
+
+    //TEMPORARY!! TODO: load unlockedLevel from Firestore instead (everything unlocked for testing)
+    let unlocked = TOTAL_LEVELS;
 
     const grid = document.getElementById("level-grid");
 
