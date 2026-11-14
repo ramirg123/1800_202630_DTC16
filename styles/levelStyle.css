@@ -105,19 +105,6 @@ canvas {
     outline: 2px solid #fff;
 }
 
-.inventory-btn {
-    justify-self: end;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
 .inventory-btn:hover {
     background: rgba(255, 255, 255, 0.2);
 }
@@ -135,42 +122,10 @@ canvas {
     justify-content: center;
 }
 
-.inventory-overlay[hidden] {
-    display: none;
-}
-
-.inventory-panel {
-    width: 90%;
-    padding: 16px;
-    background: #2b2b2c;
-    border: 1px solid #060606;
-    border-radius: 12px;
-    color: #fff;
-}
-
-.inventory-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .inventory-header h2 {
     margin: 0;
     font-size: 20px;
     font-weight: 700;
-}
-
-.close-btn {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    border-radius: 8px;
-    color: #fff;
-    cursor: pointer;
 }
 
 .close-btn:hover {

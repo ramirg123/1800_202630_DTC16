@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Game</title>
+    <link rel="stylesheet" href="styles/background.css" />
+    <style>
+        #board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            max-width: 360px;
+            margin: 0 auto;
+            margin-bottom: 16px;
+        }
+
+        .word {
+            padding: 14px 4px;
+            font-size: 13px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .word.selected {
+            background: var(--blob-3);
+            color: white;
+        }
+
+        .solved-row {
+            max-width: 360px;
+            margin: 0 auto 6px;
+            padding: 10px;
+            border-radius: 6px;
+            background: var(--blob-4);
+            text-align: center;
+            color: white;
+        }
+
+        body {
+            overflow: auto;
+            color: white;
+            text-align: center;
+            padding: 20px 16px;
+            font-family: sans-serif;
+        }
+
+        #deselect,
+        #submit {
+            margin: 10px 4px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            border-radius: 8px;
+        }
+
+        #deselect:hover,
+        #submit:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            margin-bottom: 8px;
+        }
+
+        p {
+            margin-bottom: 16px;
+        }
+
+        #solved {
+            margin-bottom: 6px;
+        }
+
+        #message {
+            min-height: 1.2em;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Four by Four</h1>
+    <p>Find four groups of four!</p>
+
+    <div id="solved"></div>
+    <div id="board"></div>
+
+    <p id="mistakes"></p>
+    <p id="message"></p>
+
+    <button id="deselect">Deselect All</button>
+    <button id="submit">Submit</button>
+
+    <div class="bg" aria-hidden="true">
+        <div class="blob one"></div>
+        <div class="blob two"></div>
+        <div class="blob three"></div>
+        <div class="blob four"></div>
+    </div>
+
+    <script type="module">
+
+        // ---------- Firestore ----------
+
+        import { db } from "./src/firebaseConfig.js";
+        import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+        import { onAuthReady } from "./src/authentication.js";
+
+        const params = new URLSearchParams(window.location.search);
+        const level = params.get("level");
+        const door = params.get("door");
+        let userId = null;
+
+        onAuthReady(function (user) {
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
+            userId = user.uid;
+        });
+
+        const ROUNDS = [
+            [
+                { name: "Planets", words: ["MARS", "VENUS", "EARTH", "SATURN"] },
+                { name: "Card games", words: ["POKER", "SNAP", "RUMMY", "BRIDGE"] },
+                { name: "Things with keys", words: ["PIANO", "MAP", "LOCK", "KEYBOARD"] },
+                { name: "___ball", words: ["BASKET", "FOOT", "SNOW", "DODGE"] }
+            ],
+            [
+                { name: "Coffee orders", words: ["LATTE", "MOCHA", "ESPRESSO", "CORTADO"] },
+                { name: "Dog breeds", words: ["BOXER", "POODLE", "BEAGLE", "PUG"] },
+                { name: "Pirate gear", words: ["HOOK", "PARROT", "PATCH", "PLANK"] },
+                { name: "Shades of brown", words: ["TAN", "BEIGE", "CHESTNUT", "UMBER"] }
+            ],
+            [
+                { name: "Chess pieces", words: ["KING", "QUEEN", "ROOK", "BISHOP"] },
+                { name: "Fruits", words: ["APPLE", "MANGO", "PLUM", "KIWI"] },
+                { name: "Things with a shell", words: ["EGG", "TURTLE", "SNAIL", "TACO"] },
+                { name: "Card words", words: ["ACE", "JACK", "JOKER", "DECK"] }
+            ],
+            [
+                { name: "Programming languages", words: ["PYTHON", "JAVA", "RUBY", "SWIFT"] },
+                { name: "Snakes", words: ["COBRA", "VIPER", "MAMBA", "ADDER"] },
+                { name: "Gemstones", words: ["OPAL", "EMERALD", "SAPPHIRE", "JADE"] },
+                { name: "Weather", words: ["RAIN", "HAIL", "FOG", "SLEET"] }
+            ],
+            [
+                { name: "Kitchen tools", words: ["WHISK", "LADLE", "SPATULA", "TONGS"] },
+                { name: "Instruments", words: ["DRUM", "FLUTE", "CELLO", "HARP"] },
+                { name: "___fish", words: ["CAT", "SWORD", "STAR", "JELLY"] },
+                { name: "Things with strings", words: ["KITE", "YOYO", "PUPPET", "RACKET"] }
+            ],
+        ];
+
+        const MAX_MISTAKES = 4;
+        let groups, selected, solvedCount, mistakes, over;
+
+        const board = document.getElementById("board");
+        const solvedArea = document.getElementById("solved");
+        const message = document.getElementById("message");
+        const mistakesText = document.getElementById("mistakes");
+
+        function newGame() {
+            groups = ROUNDS[Math.floor(Math.random() * ROUNDS.length)];
+            selected = [];
+            solvedCount = 0;
+            mistakes = MAX_MISTAKES;
+            over = false;
+            message.textContent = "";
+            solvedArea.innerHTML = "";
+            showMistakes();
+
+            let allWords = [];
+            for (let i = 0; i < groups.length; i++) {
+                for (let j = 0; j < groups[i].words.length; j++) {
+                    allWords.push(groups[i].words[j]);
+                }
+            }
+            shuffle(allWords);
+
+            board.innerHTML = "";
+            for (let i = 0; i < allWords.length; i++) {
+                const btn = document.createElement("button");
+                btn.className = "word";
+                btn.textContent = allWords[i];
+                btn.onclick = function () { toggleWord(btn); };
+                board.appendChild(btn);
+            }
+        }
+
+        function showMistakes() {
+            mistakesText.textContent = "Mistakes remaining: " + mistakes;
+        }
+
+        function shuffle(list) {
+            for (let i = list.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                let temp = list[i];
+                list[i] = list[j];
+                list[j] = temp;
+            }
+        }
+
+        function toggleWord(btn) {
+            if (over) return;
+
+            let index = selected.indexOf(btn);
+            if (index != -1) {
+                selected.splice(index, 1);
+                btn.classList.remove("selected");
+            } else if (selected.length < 4) {
+                selected.push(btn);
+                btn.classList.add("selected");
+            }
+        }
+
+        function deselectAll() {
+            for (let i = 0; i < selected.length; i++) {
+                selected[i].classList.remove("selected");
+            }
+            selected = [];
+        }
+
+        function submitGuess() {
+            if (over || selected.length != 4) return;
+            message.textContent = "";
+
+            let match = null;
+            for (let i = 0; i < groups.length; i++) {
+                let count = 0;
+                for (let j = 0; j < selected.length; j++) {
+                    if (groups[i].words.includes(selected[j].textContent)) count++;
+                }
+                if (count == 4) match = groups[i];
+                if (count == 3) message.textContent = "One away...";
+            }
+
+            if (match) {
+                showSolvedGroup(match);
+                for (let j = 0; j < selected.length; j++) {
+                    selected[j].remove();
+                }
+                selected = [];
+                message.textContent = "";
+                solvedCount++;
+                if (solvedCount == 4) endGame(true);
+            } else {
+                mistakes--;
+                showMistakes();
+                deselectAll();
+                if (mistakes == 0) endGame(false);
+            }
+        }
+
+        function showSolvedGroup(group) {
+            const row = document.createElement("div");
+            row.className = "solved-row";
+            row.innerHTML = "<strong>" + group.name + "</strong><br>" + group.words.join(", ");
+            solvedArea.appendChild(row);
+        }
+
+        function endGame(won) {
+            over = true;
+
+            if (won) {
+                message.textContent = "You found all four groups!";
+            } else {
+                message.textContent = "Out of mistakes.";
+
+                for (let i = 0; i < groups.length; i++) {
+                    let alreadyShown = solvedArea.textContent.includes(groups[i].name);
+                    if (!alreadyShown) showSolvedGroup(groups[i]);
+                }
+                board.innerHTML = "";
+            }
+
+            if (door) {
+                message.textContent += " Returning to the level...";
+                let save = Promise.resolve();
+                if (won) {
+                    save = updateDoc(doc(db, "users", userId), { "run.openDoors": arrayUnion(door) });
+                }
+                save.finally(function () {
+                    setTimeout(function () {
+                        window.location.href = "level.html?level=" + level + "&resume=1";
+                    }, 2000);
+                });
+                return;
+            }
+        }
+
+        document.getElementById("submit").onclick = submitGuess;
+        document.getElementById("deselect").onclick = deselectAll;
+
+        newGame();
+
+    </script>
+</body>
+
+</html>
