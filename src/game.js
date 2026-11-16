@@ -4,7 +4,7 @@ import { LEVELS } from "./levels.js";
 // ---------- Firestore ----------
 
 import { db } from "./firebaseConfig.js";
-import { doc, getDoc, setDoc, arrayUnion, updateDoc, addDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, arrayUnion, updateDoc, addDoc, documentId } from "firebase/firestore";
 import { onAuthReady } from "./authentication.js";
 import { timestampAdd } from "firebase/firestore/pipelines";
 
@@ -95,7 +95,6 @@ function startGame() {
     openCharSelect();
     document.getElementById("star-total").textContent = totalStars;
     document.getElementById("star-count").textContent = starsCollected;
-    startTime = Date.now()
 }
 
 // ---------- Canvas ----------
@@ -370,7 +369,8 @@ function formatTime(ms) {
     const totalSeconds = Math.floor(ms / 1000);
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
-    return minutes + ":" + String(seconds).padStart(2, "0");
+    const millis = ms % 1000;
+    return minutes + ":" + String(seconds).padStart(2, "0") + ":" + String(millis).padStart(3, "0");
 }
 
 async function winGame() {
@@ -379,6 +379,8 @@ async function winGame() {
     const totalTime = endTime - runStartedAt;
 
     await recordTime(levelNumber, totalTime);
+
+    location.href = "winscreen.html?time=" + encodeURIComponent(formatTime(totalTime));
 }
 
 async function recordTime(levelNum, totalTime) {
@@ -386,13 +388,11 @@ async function recordTime(levelNum, totalTime) {
     const snap = await getDoc(levelRef);
 
     if (snap.exists() && snap.data().time <= totalTime) {
-        return;   // existing time is as good or better, so don't overwrite
+        return;   // existing time is as good or better
     }
 
     await setDoc(levelRef, {
         time: totalTime,
         timeText: formatTime(totalTime)
     }, { merge: true });
-
-    const isNewBest = await recordTime(levelNumber, totalTime);
 }
