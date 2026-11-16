@@ -5,12 +5,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Street View Test</title>
+    <link rel="stylesheet" href="styles/background.css" />
     <style>
         body {
             font-family: sans-serif;
             max-width: 900px;
             margin: 20px auto;
             padding: 0 10px;
+            color: white;
         }
 
         #pano {
@@ -33,6 +35,13 @@
     <div id="choices"></div>
     <p id="message"></p>
     <button id="next" hidden>Next</button>
+
+    <div class="bg" aria-hidden="true">
+        <div class="blob one"></div>
+        <div class="blob two"></div>
+        <div class="blob three"></div>
+        <div class="blob four"></div>
+    </div>
 
     <script>
         const ROUNDS = 5;
