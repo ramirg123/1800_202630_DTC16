@@ -4,8 +4,9 @@ import { LEVELS } from "./levels.js";
 // ---------- Firestore ----------
 
 import { db } from "./firebaseConfig.js";
-import { doc, getDoc, setDoc, arrayUnion, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, arrayUnion, updateDoc, addDoc } from "firebase/firestore";
 import { onAuthReady } from "./authentication.js";
+import { timestampAdd } from "firebase/firestore/pipelines";
 
 let sprite
 
@@ -21,6 +22,8 @@ let userId = null;
 let userRef = null;
 let startX, startY;
 let lastSave = Promise.resolve();
+let endTime = 0;
+let runStartedAt = 0;
 
 onAuthReady(async function (user) {
     if (!user) {
@@ -37,6 +40,8 @@ onAuthReady(async function (user) {
         run = { level: levelNumber, startedAt: Date.now(), stars: [], openDoors: [] };
         await updateDoc(userRef, { run: run });
     }
+
+    runStartedAt = run.startedAt;
 
     for (let i = 0; i < run.stars.length; i++) {
         let parts = run.stars[i].split(",");
@@ -90,6 +95,7 @@ function startGame() {
     openCharSelect();
     document.getElementById("star-total").textContent = totalStars;
     document.getElementById("star-count").textContent = starsCollected;
+    startTime = Date.now()
 }
 
 // ---------- Canvas ----------
@@ -295,6 +301,10 @@ function collectStar(sprite) {
         let key = row + "," + col;
         collected.push(key);
         lastSave = updateDoc(userRef, { "run.stars": arrayUnion(key) });
+
+        if (starsCollected == totalStars) {
+            winGame();
+        }
     }
 }
 
@@ -355,3 +365,34 @@ window.addEventListener("keydown", function (e) {
         closeCharSelect();
     }
 });
+
+function formatTime(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return minutes + ":" + String(seconds).padStart(2, "0");
+}
+
+async function winGame() {
+    clearInterval(gameArea.interval);
+    endTime = Date.now();
+    const totalTime = endTime - runStartedAt;
+
+    await recordTime(levelNumber, totalTime);
+}
+
+async function recordTime(levelNum, totalTime) {
+    const levelRef = doc(db, "users", userId, "levels", String(levelNum));
+    const snap = await getDoc(levelRef);
+
+    if (snap.exists() && snap.data().time <= totalTime) {
+        return;   // existing time is as good or better, so don't overwrite
+    }
+
+    await setDoc(levelRef, {
+        time: totalTime,
+        timeText: formatTime(totalTime)
+    }, { merge: true });
+
+    const isNewBest = await recordTime(levelNumber, totalTime);
+}
