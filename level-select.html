@@ -30,18 +30,35 @@
       padding: 12px 16px;
     }
 
+    /* Back button: same theme as PLAY / ACHIEVEMENTS / SHOP */
     .back-btn {
-      background: #6a35a3;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px;
       color: #fff;
-      border: none;
-      border-radius: 999px;
-      padding: 8px 18px;
-      font-weight: 700;
-      font-size: 14px;
-      cursor: pointer;
       text-decoration: none;
+      font-family: Andale Mono, monospace;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      border: 2px solid transparent;
+      border-radius: 16px;
+      background:
+        linear-gradient(rebeccapurple, rebeccapurple) padding-box,
+        linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc) border-box;
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.45);
+      text-shadow: 0 0 6px rgba(240, 171, 252, 0.5);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .back-btn:hover { background: #7d44bd; }
+    .back-btn:hover {
+      transform: translateY(-1px) scale(1.04);
+      box-shadow:
+        0 0 18px rgba(168, 85, 247, 0.7),
+        0 0 30px rgba(240, 171, 252, 0.35);
+    }
+    .back-btn .arrow { transition: transform 0.2s ease; }
+    .back-btn:hover .arrow { transform: translateX(-3px); }
 
     .coins {
       background: rgba(255, 255, 255, 0.12);
@@ -83,22 +100,34 @@
     .level-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
 
     .level-btn.locked {
+      position: relative;
       background: #3a1d55;
-      color: rgba(255, 255, 255, 0.35);
+      color: rgba(255, 255, 255, 0.35);   /* faded level number */
       cursor: not-allowed;
       box-shadow: 0 6px 0 #24103a;
     }
+    .level-btn.locked:hover { background: #3a1d55; }
     .level-btn.locked:active { transform: none; }
+
+    /* Plain white lock in the top-right corner of locked tiles */
+    .lock-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 22px;
+      height: 22px;
+    }
 
     @media (max-width: 420px) {
       .level-grid { grid-template-columns: repeat(3, 84px); gap: 14px; }
       .level-btn { height: 84px; font-size: 30px; }
+      .lock-icon { top: 7px; right: 7px; width: 17px; height: 17px; }
     }
   </style>
 </head>
 <body>
   <div class="top-bar">
-    <a href="index.html" class="back-btn">Back</a>
+    <a href="index.html" class="back-btn"><span class="arrow">←</span> Back</a>
     <div class="coins">⬢ <span id="coin-count">0</span></div>
     <div class="spacer"></div>
   </div>
@@ -110,25 +139,30 @@
   <script type="module">
     import { LEVELS } from "./src/levels.js";
 
-    const TOTAL_LEVELS = Object.keys(LEVELS).length;
-
-    // // Highest level the player has unlocked. Defaults to 1 until your
-    // // game saves progress (e.g. localStorage.setItem("unlockedLevel", 2)).
-    // let unlocked = 1;
-    // try {
-    //   unlocked = parseInt(localStorage.getItem("unlockedLevel")) || 1;
-    // } catch (e) {}
+    const TOTAL_SLOTS = 9;                          // tiles shown on the page
+    const AVAILABLE = Object.keys(LEVELS).length;   // levels that actually exist
 
     //TEMPORARY!! TODO: load unlockedLevel from Firestore instead (everything unlocked for testing)
-    let unlocked = TOTAL_LEVELS;
+    let unlocked = AVAILABLE;
+
+    // Plain white padlock icon
+    const LOCK_SVG = `
+      <svg class="lock-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7.5 11V7.5a4.5 4.5 0 0 1 9 0V11" fill="none" stroke="#fff"
+              stroke-width="2.4" stroke-linecap="round"/>
+        <rect x="4.5" y="10.5" width="15" height="11" rx="2.5" fill="#fff"/>
+      </svg>`;
 
     const grid = document.getElementById("level-grid");
+ // Show everything locked until Firestore answers
 
-    for (let i = 1; i <= TOTAL_LEVELS; i++) {
+
+    for (let i = 1; i <= TOTAL_SLOTS; i++) {
       const btn = document.createElement("button");
       btn.className = "level-btn";
 
-      if (i <= unlocked) {
+      // Playable only if the level exists AND the player has unlocked it
+      if (i <= AVAILABLE && i <= unlocked) {
         btn.textContent = i;
         btn.setAttribute("aria-label", "Play level " + i);
         // level.html can read this with: new URLSearchParams(location.search).get("level")
@@ -136,7 +170,7 @@
           window.location.href = "level.html?level=" + i;
         });
       } else {
-        btn.textContent = "🔒";
+        btn.innerHTML = i + LOCK_SVG;   // level number + white lock
         btn.classList.add("locked");
         btn.disabled = true;
         btn.setAttribute("aria-label", "Level " + i + " is locked");
