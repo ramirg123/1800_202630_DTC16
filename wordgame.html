@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Wordle Test</title>
+    <link rel="stylesheet" href="styles/background.css" />
     <style>
         body {
             font-family: sans-serif;
@@ -12,6 +13,7 @@
             margin: 20px auto;
             padding: 0 10px;
             text-align: center;
+            color: white;
         }
 
         .row {
@@ -109,6 +111,13 @@
     <button id="again" hidden>Play again</button>
 
     <h2 id="score">Wins: 0 / Played: 0</h2>
+
+    <div class="bg" aria-hidden="true">
+        <div class="blob one"></div>
+        <div class="blob two"></div>
+        <div class="blob three"></div>
+        <div class="blob four"></div>
+    </div>
 
     <script type="module">
 
