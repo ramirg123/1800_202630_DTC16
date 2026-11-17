@@ -4,9 +4,9 @@ import { LEVELS } from "./levels.js";
 // ---------- Firestore ----------
 
 import { db } from "./firebaseConfig.js";
-import { doc, getDoc, setDoc, arrayUnion, updateDoc, addDoc, documentId } from "firebase/firestore";
+import { doc, getDoc, setDoc, arrayUnion, updateDoc } from "firebase/firestore";
 import { onAuthReady } from "./authentication.js";
-import { timestampAdd } from "firebase/firestore/pipelines";
+//import { timestampAdd } from "firebase/firestore/pipelines";
 
 let sprite
 
@@ -16,7 +16,6 @@ const OPEN_DOOR = 6;
 const starImage = new Image();
 starImage.src = "images/star.png"
 
-let collected = [];
 let starsCollected = 0;
 let userId = null;
 let userRef = null;
@@ -80,12 +79,10 @@ const room = level.room;
 
 let totalStars = 0;
 for (let row = 0; row < room.length; row++) {
-    for (let col = 0; col < room.length; col++) {
+    for (let col = 0; col < room[row].length; col++) {
         if (room[row][col] == STAR) totalStars++;
     }
 }
-
-const STAR_FIELD = "level" + levelNumber + "Stars";
 
 // ---------- Game Start ----------
 
@@ -298,7 +295,6 @@ function collectStar(sprite) {
         document.getElementById("star-count").textContent = starsCollected;
 
         let key = row + "," + col;
-        collected.push(key);
         lastSave = updateDoc(userRef, { "run.stars": arrayUnion(key) });
 
         if (starsCollected == totalStars) {
@@ -375,6 +371,7 @@ function formatTime(ms) {
 
 async function winGame() {
     clearInterval(gameArea.interval);
+    await lastSave;
     endTime = Date.now();
     const totalTime = endTime - runStartedAt;
 

@@ -73,15 +73,22 @@ const FOOTBALL_TEMPLATE = [
 ];
 
 const characters = [
-    { name: "Ninja", ninja: true },
-    { name: "Jon", colours: { H: "#e8562a", S: "#f6c9a0", E: "#1a1a1a", T: "#3b5bdb", P: "#2b2b2c", B: "#5c3a1e" } },
-    { name: "Ramir", colours: { H: "#151515", S: "#c99a6e", E: "#1a1a1a", T: "#f2c230", P: "#4a4a4a", B: "#222222" } },
-    { name: "Shuhan", template: SPEEDO_TEMPLATE, colours: { H: "#151515", S: "#e6b88f", E: "#1a1a1a", R: "#2563eb" } },
-    { name: "Elika", template: LONG_HAIR_TEMPLATE, colours: { H: "#151515", S: "#f3cfae", E: "#1a1a1a", L: "#d6204a", T: "#262626", P: "#151515", B: "#c81e3a" } },
-    { name: "Michael", colours: { H: "#f5c518", S: "#f1c7a4", E: "#1a1a1a", T: "#7c3aed", P: "#151515", B: "#5c3a1e" } },
-    { name: "Birjot", template: TURBAN_TEMPLATE, colours: { K: "#151515", F: "#3a3a3a", S: "#c99a6e", E: "#1a1a1a", T: "#9ca3af", P: "#151515", B: "#e5e5e5" } },
-    { name: "JSN", template: FOOTBALL_TEMPLATE, colours: { C: "#2b2b2b", D: "#1a1a1a", S: "#c68f63", E: "#1a1a1a", Y: "#1a1a1a", T: "#1b2a4a", G: "#7bd321", P: "#1b2a4a", B: "#111111" } }
+    { id: "ninja", price: 0, name: "Ninja", ninja: true },
+    { id: "jon", price: 1, name: "Jon", colours: { H: "#e8562a", S: "#f6c9a0", E: "#1a1a1a", T: "#3b5bdb", P: "#2b2b2c", B: "#5c3a1e" } },
+    { id: "ramir", price: 1, name: "Ramir", colours: { H: "#151515", S: "#c99a6e", E: "#1a1a1a", T: "#f2c230", P: "#4a4a4a", B: "#222222" } },
+    { id: "shuhan", price: 2, name: "Shuhan", template: SPEEDO_TEMPLATE, colours: { H: "#151515", S: "#e6b88f", E: "#1a1a1a", R: "#2563eb" } },
+    { id: "elika", price: 2, name: "Elika", template: LONG_HAIR_TEMPLATE, colours: { H: "#151515", S: "#f3cfae", E: "#1a1a1a", L: "#d6204a", T: "#262626", P: "#151515", B: "#c81e3a" } },
+    { id: "michael", price: 2, name: "Michael", colours: { H: "#f5c518", S: "#f1c7a4", E: "#1a1a1a", T: "#7c3aed", P: "#151515", B: "#5c3a1e" } },
+    { id: "birjot", price: 3, name: "Birjot", template: TURBAN_TEMPLATE, colours: { K: "#151515", F: "#3a3a3a", S: "#c99a6e", E: "#1a1a1a", T: "#9ca3af", P: "#151515", B: "#e5e5e5" } },
+    { id: "jsn", price: 4, name: "JSN", template: FOOTBALL_TEMPLATE, colours: { C: "#2b2b2b", D: "#1a1a1a", S: "#c68f63", E: "#1a1a1a", Y: "#1a1a1a", T: "#1b2a4a", G: "#7bd321", P: "#1b2a4a", B: "#111111" } }
 ];
+
+function getCharacterById(id) {
+    for (let i = 0; i < characters.length; i++) {
+        if (characters[i].id == id) return characters[i];
+    }
+    return characters[0];
+}
 
 function drawNinja(ctx, x, y, size) {
     // body
