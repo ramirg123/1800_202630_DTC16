@@ -1,0 +1,143 @@
+/* =========================================================
+   Top navigation bar (icons only)
+   Matches the main menu: rebeccapurple, lavender→pink
+   gradient border, soft purple glow.
+   ========================================================= */
+
+#topNav {
+  position: relative;
+  z-index: 20;
+  width: min(100% - 24px, 300px);      /* 768px wide, shrinks on small screens */
+  margin: 12px auto 0;                 /* centered on the page */
+  display: flex;
+  justify-content: space-between;      /* left group | empty middle | right group */
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 16px;
+  background: rgba(102, 51, 153, 0.35);   /* translucent rebeccapurple */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.35);
+}
+
+/* Gradient border ring (same colours as PLAY / ACHIEVEMENTS / SHOP) */
+#topNav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ---------- Icon groups ---------- */
+
+.nav-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Same look as the previous navbar icons: plain white icon with a white glow */
+.nav-icon {
+  width: 32px;                 /* comfortable touch target */
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* #topNav prefix makes sure no other stylesheet can turn the icons grey */
+#topNav .nav-icon,
+#topNav .nav-icon i {
+  color: #fff;
+  opacity: 1;
+}
+
+/* Profile hugs the left edge, Settings hugs the right edge */
+#topNav .nav-group.left .nav-icon:first-child { justify-content: flex-start; }
+#topNav .nav-group.right .nav-icon:last-child { justify-content: flex-end; }
+
+.nav-icon i {
+  font-size: 26px;
+  line-height: 1;
+  text-shadow:
+    0 0 6px rgba(255, 255, 255, 0.7),
+    0 0 14px rgba(255, 255, 255, 0.35);
+  transition: transform 0.2s ease, text-shadow 0.2s ease;
+}
+
+/* Hover (mouse only, so it doesn't stick after a tap) */
+@media (hover: hover) {
+  .nav-icon:hover i {
+    transform: scale(1.1);
+    text-shadow:
+      0 0 8px rgba(255, 255, 255, 0.9),
+      0 0 20px rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* Keyboard focus */
+.nav-icon:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 760px) {
+  #topNav { padding: 4px 6px; }
+}
+
+@media (max-width: 380px) {
+  .nav-group { gap: 0; }
+  .nav-icon { width: 40px; height: 40px; }
+  .nav-icon i { font-size: 23px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #topNav * { transition: none !important; }
+}
+
+/* Style every icon in the navbar, whatever class the HTML uses */
+#topNav button,
+#topNav a {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  text-decoration: none;
+  cursor: pointer;
+  color: #fff !important;
+}
+
+#topNav i {
+  color: #fff !important;
+  font-size: 26px;
+  line-height: 1;
+  text-shadow:
+    0 0 6px rgba(255, 255, 255, 0.7),
+    0 0 14px rgba(255, 255, 255, 0.35);
+  transition: transform 0.2s ease;
+}
+
+@media (hover: hover) {
+  #topNav button:hover i,
+  #topNav a:hover i {
+    transform: scale(1.1);
+  }
+}
