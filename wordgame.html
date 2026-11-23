@@ -98,16 +98,11 @@
             color: white;
         }
     </style>
-    <link rel="stylesheet" href="styles/exitButton.css" />
 </head>
 
 <body>
-    <div class="puzzle-top-bar">
-  <a href="level-select.html" class="exit-btn" aria-label="Exit to level select">
-    <span class="arrow">←</span> Exit
-  </a>
-</div>
     <h1>4-Letter Wordle</h1>
+    <span id="puzzleTimer" class="mx-10 my-auto">0:00</span>
     <div id="board"></div>
 
     <input id="guess" maxlength="4" autocomplete="off" />
@@ -298,6 +293,7 @@
         newGame();
 
     </script>
+    <script type="module" src="/src/puzzleTimer.js"></script>
 </body>
 
 </html>
