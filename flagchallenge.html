@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Flag Challenge</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 10px;
+        }
+
+        /* border so white edges of flags still show up on white page */
+        #flag {
+            display: block;
+            width: 100%;
+            max-width: 320px;
+            margin: 10px auto;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            min-height: 56px;
+            margin: 10px 0;
+            padding: 14px;
+            font-size: 18px;
+        }
+
+        /* keep hidden buttons hidden */
+        button[hidden] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Flag Challenge</h1>
+    <p id="info"></p>
+    <p>Which country does this flag belong to?</p>
+    <img id="flag" alt="Flag to guess" />
+    <div id="choices"></div>
+    <p id="message"></p>
+    <button id="next" hidden>Next</button>
+
+    <script>
+        const ROUNDS = 5;
+
+        // Every country has it's code associated with it
+        const COUNTRIES = [
+            { name: "United States", code: "us" }, { name: "Canada", code: "ca" },
+            { name: "Australia", code: "au" }, { name: "United Kingdom", code: "gb" },
+            { name: "Brazil", code: "br" }, { name: "Argentina", code: "ar" },
+            { name: "Italy", code: "it" }, { name: "China", code: "cn" },
+            { name: "Japan", code: "jp" }, { name: "Russia", code: "ru" },
+            { name: "South Korea", code: "kr" }, { name: "India", code: "in" },
+            { name: "North Korea", code: "kp" }, { name: "Turkey", code: "tr" },
+            { name: "Mexico", code: "mx" }, { name: "Israel", code: "il" },
+            { name: "Germany", code: "de" }, { name: "France", code: "fr" },
+            { name: "Ireland", code: "ie" }, { name: "Poland", code: "pl" },
+            { name: "Ukraine", code: "ua" }, { name: "Iran", code: "ir" },
+            { name: "Colombia", code: "co" }, { name: "Portugal", code: "pt" },
+            { name: "Spain", code: "es" }, { name: "Norway", code: "no" },
+            { name: "Jamaica", code: "jm" }, { name: "Belgium", code: "be" },
+            { name: "South Africa", code: "za" }, { name: "Algeria", code: "dz" },
+            { name: "Vietnam", code: "vn" }, { name: "Philippines", code: "ph" },
+            { name: "New Zealand", code: "nz" }, { name: "Cameroon", code: "cm" },
+            { name: "Venezuela", code: "ve" }, { name: "Peru", code: "pe" },
+            { name: "Rwanda", code: "rw" }, { name: "Mozambique", code: "mz" },
+            { name: "Singapore", code: "sg" }, { name: "Austria", code: "at" },
+        ];
+
+        let round = 0;
+        let score = 0;
+        let answer;
+
+        const info = document.getElementById("info");
+        const flag = document.getElementById("flag");
+        const choices = document.getElementById("choices");
+        const message = document.getElementById("message");
+        const nextBtn = document.getElementById("next");
+
+        function randomCountry() {
+            return COUNTRIES[Math.floor(Math.random() * COUNTRIES.length)];
+        }
+
+        function nextRound() {
+            // when 5 rounds are done the game restarts
+            if (round === ROUNDS) {
+                round = 0;
+                score = 0;
+            }
+            round++;
+            nextBtn.hidden = true;
+            message.textContent = "";
+            info.textContent = `Flag ${round} of ${ROUNDS}. Score: ${score}`;
+
+            // Pick random country to show its flag
+            answer = randomCountry();
+            flag.src = `https://flagcdn.com/w320/${answer.code}.png`;
+
+            // Make a list of 4 different countries, starting with the right answer
+            const options = [answer];
+            while (options.length < 4) {
+                const country = randomCountry();
+                if (!options.includes(country)) {
+                    options.push(country);
+                }
+            }
+
+            // Swap the right answer into a random spot so it isn't first every time
+            const spot = Math.floor(Math.random() * 4);
+            const temp = options[spot];
+            options[spot] = options[0];
+            options[0] = temp;
+
+            // One button for each option
+            choices.innerHTML = "";
+            for (const country of options) {
+                const btn = document.createElement("button");
+                btn.textContent = country.name;
+                btn.onclick = function () {
+                    guess(country);
+                };
+                choices.appendChild(btn);
+            }
+        }
+
+        function guess(country) {
+            // Disable the buttons so the player can only answer once
+            for (const btn of choices.children) {
+                btn.disabled = true;
+            }
+
+            if (country === answer) {
+                score++;
+                message.textContent = "Right!";
+            } else {
+                message.textContent = `Wrong. That's the flag of ${answer.name}.`;
+            }
+            info.textContent = `Flag ${round} of ${ROUNDS}. Score: ${score}`;
+
+            if (round === ROUNDS) {
+                message.textContent += ` Final score: ${score}/${ROUNDS}.`;
+                nextBtn.textContent = "Play again";
+            } else {
+                nextBtn.textContent = "Next";
+            }
+            nextBtn.hidden = false;
+        }
+
+        nextBtn.onclick = nextRound;
+        nextRound();
+    </script>
+</body>
+
+</html>
