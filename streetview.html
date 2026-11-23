@@ -7,6 +7,7 @@
     <title>Street View Test</title>
     <link rel="stylesheet" href="styles/background.css" />
     <style>
+        
         body {
             font-family: sans-serif;
             max-width: 900px;
@@ -26,9 +27,15 @@
             margin: 4px;
         }
     </style>
+    <link rel="stylesheet" href="styles/exitButton.css" />
 </head>
 
 <body>
+    <div class="puzzle-top-bar">
+  <a href="level-select.html" class="exit-btn" aria-label="Exit to level select">
+    <span class="arrow">←</span> Exit
+  </a>
+</div>
     <h1>Guess the continent</h1>
     <p id="info">Loading…</p>
     <div id="pano"></div>

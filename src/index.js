@@ -1,9 +1,6 @@
 $(document).ready( function () {
-    $(".bi-person-circle").on("click", function () {
-        $("#profileMenu").removeClass("hidden")
-    });
-    
-    $("#profileBackButton").on("click", function () {
-        $("#profileMenu").addClass("hidden")
+    // Profile icon (or the player's character, see src/profileIcon.js) opens the profile page
+    $("#profileNav").on("click", function () {
+        window.location.href = "profile.html";
     });
 })
