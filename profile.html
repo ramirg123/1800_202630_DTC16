@@ -33,7 +33,7 @@
     </nav>
 
     <main class="profile-page">
-      <h1 class="profile-title">Profile</h1>
+      <h1 class="profile-title" id="profile-title">Profile</h1>
 
       <section class="profile-card" aria-labelledby="char-heading">
         <p class="profile-greeting" id="greeting">Loading…</p>
@@ -49,6 +49,9 @@
 
         <p class="save-status" id="save-status" role="status" aria-live="polite"></p>
       </section>
+
+      <!-- Only shown right after sign up / login (profile.html?setup=1) -->
+      <a href="main.html" class="continue-btn" id="continueBtn" hidden aria-disabled="true">Continue</a>
     </main>
 
     <script src="src/characters.js"></script>

@@ -15,14 +15,16 @@
     />
 
     <link rel="stylesheet" href="styles/levelStyle.css" />
+    <!-- Level navbar: same look as the main menu / level select navbar -->
+    <link rel="stylesheet" href="styles/levelNav.css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   </head>
 
   <body>
     <!-- Jon's Section Start-->
     <div class="game-wrapper">
-      <nav class="level-bar">
-        <div class="d-flex gap-2" style="justify-self: end">
+            <nav class="level-bar">
+        <div class="level-bar-items">
           <a
             href="level-select.html"
             class="back-btn"
@@ -32,12 +34,10 @@
             <i class="bi bi-arrow-left"></i>
           </a>
 
-          <p class="bg-white bg-opacity-10 text-white rounded px-1.5 my-auto py-2.5">Time: <span id="timer">0:00:000</span></p>
+          <p class="level-pill level-timer">Time: <span id="timer">0:00:000</span></p>
 
-          <div
-            class="d-flex align-items-center gap-2 bg-white bg-opacity-10 text-white rounded px-3 py-1.5 fw-bold fs-5"
-          >
-            <img src="images/star.png" alt="" class="w-6 h-6" />
+          <div class="level-pill level-stars">
+            <img src="images/star.png" alt="" />
             <span id="star-count">0</span>/ <span id="star-total">0</span>
           </div>
 

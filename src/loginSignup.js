@@ -11,8 +11,38 @@ import 'bootstrap';
 import {
     loginUser,
     signupUser,
+    logoutUser,
+    onAuthReady,
     authErrorMessage,
 } from './authentication.js';
+import { db } from './firebaseConfig.js';
+import { doc, getDoc } from 'firebase/firestore';
+
+// Character select page (the profile page in "setup" mode)
+const CHARACTER_SETUP_URL = 'profile.html?setup=1';
+
+// Keep this browser's copy of the character in step with the account
+// (so a previous account's character never shows up)
+function rememberCharacterLocally(name) {
+    try {
+        if (name) localStorage.setItem('selectedCharacter', name);
+        else localStorage.removeItem('selectedCharacter');
+    } catch (e) { }
+}
+
+// After login: accounts with a saved character carry on as normal,
+// accounts without one pick a character first
+async function pageAfterLogin(user, normalPage) {
+    try {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        const character = snap.exists() ? snap.data().character : null;
+        rememberCharacterLocally(character);
+        return character ? normalPage : CHARACTER_SETUP_URL;
+    } catch (err) {
+        console.error('Could not load the saved character:', err);
+        return normalPage;
+    }
+}
 
 
 // --- Login and Signup Page ---
@@ -29,7 +59,10 @@ function initAuthUI() {
     const toLoginBtn = document.getElementById('toLogin');
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
+    const accountView = document.getElementById('accountView');
+    const signOutBtn = document.getElementById('signOutBtn');
     const redirectUrl = 'main.html';
+    let submitting = false;   // true while a login/sign up is being sent (it redirects itself)
 
     // --- Helper Functions ---
     // Toggle element visibility
@@ -77,6 +110,33 @@ function initAuthUI() {
         loginView?.querySelector('input')?.focus();
     });
 
+    // --- Already signed in: show the account card with Sign Out ---
+    onAuthReady((user) => {
+        if (submitting) return;
+        if (user) {
+            document.getElementById('accountName').textContent = user.displayName || 'Player';
+            document.getElementById('accountEmail').textContent = user.email || '';
+            setVisible(loginView, false);
+            setVisible(signupView, false);
+            setVisible(accountView, true);
+        } else {
+            setVisible(accountView, false);
+            setVisible(loginView, true);
+        }
+    });
+
+    signOutBtn?.addEventListener('click', async () => {
+        signOutBtn.disabled = true;
+        rememberCharacterLocally(null);   // don't leave this account's character behind
+        try {
+            await logoutUser();           // signs out, then goes to the main menu
+        } catch (err) {
+            signOutBtn.disabled = false;
+            showError('Could not sign out. Please try again.');
+            console.error(err);
+        }
+    });
+
     // Login form submit
     loginForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -88,10 +148,12 @@ function initAuthUI() {
             return;
         }
         setSubmitDisabled(loginForm, true);
+        submitting = true;
         try {
-            await loginUser(email, password);
-            location.href = redirectUrl;
+            const credential = await loginUser(email, password);
+            location.href = await pageAfterLogin(credential.user, redirectUrl);
         } catch (err) {
+            submitting = false;
             showError(authErrorMessage(err));
             console.error(err);
         } finally {
@@ -111,10 +173,13 @@ function initAuthUI() {
             return;
         }
         setSubmitDisabled(signupForm, true);
+        submitting = true;
         try {
             await signupUser(name, email, password);
-            location.href = redirectUrl;
+            rememberCharacterLocally(null);   // new account: no character yet
+            location.href = redirectUrl;      // tutorial first; its Done button leads to character select
         } catch (err) {
+            submitting = false;
             showError(authErrorMessage(err));
             console.error(err);
         } finally {

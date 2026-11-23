@@ -35,8 +35,11 @@
     /* Login button in the navbar: same pill style as the Back button on level select.
        TopNav.css styles every link in the bar as a small icon, so undo that here. */
     #topNav .nav-login-btn {
-      display: inline-flex;
-      align-items: center;
+      display: inline-block;
+      max-width: 160px;          /* long names end in "…" instead of stretching the bar */
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       width: auto;
       height: auto;
       padding: 4px 14px;
@@ -55,10 +58,11 @@
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     #topNav .nav-login-btn:hover {
-      transform: translateY(-1px) scale(1.04);
-      box-shadow:
-        0 0 18px rgba(168, 85, 247, 0.7),
-        0 0 30px rgba(240, 171, 252, 0.35);
+      /* hover: slightly lighter, no glow (same as the level tiles) */
+      background:
+        linear-gradient(#7d44bd, #7d44bd) padding-box,
+        linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc) border-box;
+      box-shadow: none;
     }
     #topNav .nav-login-btn:focus-visible {
       outline: 2px solid #fff;
@@ -101,7 +105,7 @@
 
   <!-- Michael's Section Start-->
   <div id="image">
-    <img src="GAME-TITLE-2026-10-12.png" alt="GAME TITLE" style="margin: auto" />
+    <img src="QUIZZL-TITLE.png" alt="Quizzl" style="margin: auto" />
     <a href="https://www.textstudio.com/" style="display: none">Font generator</a>
   </div>
   <!-- Michael's Section End -->
