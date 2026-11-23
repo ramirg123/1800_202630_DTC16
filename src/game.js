@@ -235,6 +235,8 @@ function updateGameArea() {
 
     sprite.update();
 
+    document.getElementById("timer").setHTML(formatTime(Date.now() - runStartedAt))
+
     let door = underDoor(sprite);
     let page = level.doors[door];
 
