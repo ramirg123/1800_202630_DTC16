@@ -36,6 +36,16 @@ onAuthReady(async function (user) {
     const snap = await getDoc(userRef);
     let run = snap.exists() ? snap.data().run : null;
 
+    // Character chosen on an earlier visit (saved in Firestore)
+    const savedName = snap.exists() ? snap.data().character : null;
+    const savedCharacter = characters.find(function (c) { return c.name === savedName; });
+    if (savedCharacter) {
+        hasPickedCharacter = true;
+        selectedCharacter = savedCharacter;
+        saveCharacter(savedCharacter);   // keep localStorage in sync for other pages
+        markSelected(savedCharacter);
+    }
+
     if (!resuming || !run || run.level != levelNumber) {
         run = { level: levelNumber, startedAt: Date.now(), stars: [], openDoors: [] };
         await updateDoc(userRef, { run: run });
@@ -92,7 +102,9 @@ const STAR_FIELD = "level" + levelNumber + "Stars";
 function startGame() {
     sprite = new component(16, 16, "red", startX, startY);
     gameArea.start();
-    openCharSelect();
+    if (!hasPickedCharacter) {
+        openCharSelect();   // only the first time: after that the choice is saved in Firestore
+    }
     document.getElementById("star-total").textContent = totalStars;
     document.getElementById("star-count").textContent = starsCollected;
 }
@@ -309,6 +321,7 @@ function collectStar(sprite) {
 
 // ---------- Characters ---------- (drawing code is in src/characters.js)
 let selectedCharacter = getSavedCharacter();
+let hasPickedCharacter = false;   // true once a character is saved in Firestore
 
 // ---------- Character select popup ----------
 const charSelect = document.getElementById("char-select");
@@ -324,6 +337,8 @@ characters.forEach(function (character) {
     preview.height = 50;
     drawCharacter(preview.getContext("2d"), character, 0, 0, 50);
 
+    option.dataset.name = character.name;
+
     const label = document.createElement("span");
     label.textContent = character.name;
 
@@ -333,15 +348,24 @@ characters.forEach(function (character) {
     option.addEventListener("click", function () {
         selectedCharacter = character;
         saveCharacter(character);
-        document.querySelectorAll(".char-option").forEach(function (o) {
-            o.classList.remove("selected");
-        });
-        option.classList.add("selected");
+        markSelected(character);
+        hasPickedCharacter = true;
+        // Remember the choice on the account so the picker doesn't open again
+        if (userRef) {
+            lastSave = setDoc(userRef, { character: character.name }, { merge: true });
+        }
         closeCharSelect();
     });
 
     charGrid.appendChild(option);
 });
+
+// Highlight the chosen character in the popup
+function markSelected(character) {
+    document.querySelectorAll(".char-option").forEach(function (o) {
+        o.classList.toggle("selected", o.dataset.name === character.name);
+    });
+}
 
 function openCharSelect() {
     if (!charSelect.hidden) return;

@@ -7,6 +7,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+  <!-- Main menu navbar -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/TopNav.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script type="module" src="src/index.js"></script>
+  <!-- Player's character as the profile icon -->
+  <script src="src/characters.js"></script>
+  <script type="module" src="src/profileIcon.js"></script>
   <style>
     :root {
       --base: #0c000b;
@@ -100,7 +108,7 @@
 
     /* ---------- Page content ---------- */
 
-    /* Top bar: back button on the left, coins in the middle */
+    /* Top bar: back button on the left */
     .top-bar {
       width: 100%;
       display: flex;
@@ -136,17 +144,26 @@
         0 0 18px rgba(168, 85, 247, 0.7),
         0 0 30px rgba(240, 171, 252, 0.35);
     }
+    /* Navbar is exactly as wide as the row of level tiles (3 tiles + 2 gaps) */
+    #topNav {
+      width: calc(3 * 110px + 2 * 20px);
+      max-width: calc(100% - 24px);
+    }
+
+    /* TopNav.css styles every link in the bar as a small icon: undo that for Back */
+    #topNav .back-btn {
+      width: auto;
+      height: auto;
+      padding: 4px 14px;
+      border: 2px solid transparent;
+      background:
+        linear-gradient(rebeccapurple, rebeccapurple) padding-box,
+        linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc) border-box;
+    }
     .back-btn .arrow { transition: transform 0.2s ease; }
     .back-btn:hover .arrow { transform: translateX(-3px); }
 
-    .coins {
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 6px;
-      padding: 6px 14px;
-      font-weight: 700;
-    }
 
-    .spacer { width: 80px; } /* balances the back button so coins stay centred */
 
     h1 {
       font-family: "Audiowide", system-ui, sans-serif;
@@ -199,6 +216,7 @@
 
     @media (max-width: 420px) {
       .level-grid { grid-template-columns: repeat(3, 84px); gap: 14px; }
+      #topNav { width: calc(3 * 84px + 2 * 14px); }
       .level-btn { height: 84px; font-size: 30px; }
       .lock-icon { top: 7px; right: 7px; width: 17px; height: 17px; }
     }
@@ -213,11 +231,14 @@
     <div class="blob four"></div>
   </div>
 
-  <div class="top-bar">
+  <!-- Main menu navbar -->
+  <nav id="topNav">
     <a href="index.html" class="back-btn"><span class="arrow">←</span> Back</a>
-    <div class="coins">⬢ <span id="coin-count">0</span></div>
-    <div class="spacer"></div>
-  </div>
+
+    <button type="button" class="navItem" id="profileNav" aria-label="Profile">
+      <i class="bi bi-person-circle"></i>
+    </button>
+  </nav>
 
   <h1>Select Level</h1>
 

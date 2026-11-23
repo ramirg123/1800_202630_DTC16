@@ -1,61 +1,222 @@
-h2,
-p {
-  color: white;
+/* =========================================================
+   Login / Sign Up page
+   Matches the main menu and level select: blob background
+   (background.css), purple navbar (TopNav.css), Audiowide
+   headings and gradient-border buttons.
+   Selectors start with #topNav / .auth-card so Bootstrap
+   (loaded by src/loginSignup.js) can't override them.
+   ========================================================= */
+
+body {
+  overflow: auto;   /* background.css hides overflow; let short screens scroll */
+  min-height: 100vh;
+  color: #fff;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Bootstrap's d-none is what loginSignup.js toggles; keep it working without Bootstrap too */
+.d-none {
+  display: none !important;
+}
+
+/* ---------- Navbar: same width as the main menu and level select ---------- */
+
+#topNav {
+  width: calc(3 * 110px + 2 * 20px);
+  max-width: calc(100% - 24px);
+}
+
+/* Back button: same as level select */
+#topNav .back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  height: auto;
+  padding: 4px 14px;
+  color: #fff;
+  text-decoration: none;
+  font-family: Andale Mono, monospace;
+  font-size: 15px;
+  font-weight: bold;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  background:
+    linear-gradient(rebeccapurple, rebeccapurple) padding-box,
+    linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc) border-box;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.45);
+  text-shadow: 0 0 6px rgba(240, 171, 252, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+#topNav .back-btn:hover {
+  transform: translateY(-1px) scale(1.04);
+  box-shadow:
+    0 0 18px rgba(168, 85, 247, 0.7),
+    0 0 30px rgba(240, 171, 252, 0.35);
+}
+#topNav .back-btn .arrow { transition: transform 0.2s ease; }
+#topNav .back-btn:hover .arrow { transform: translateX(-3px); }
+
+/* ---------- Card ---------- */
+
+.auth-page {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0 40px;
+}
+
+.auth-card {
+  position: relative;
+  width: calc(3 * 110px + 2 * 20px);   /* same width as the navbar */
+  max-width: calc(100% - 24px);
+  padding: 24px 22px 20px;
+  border-radius: 20px;
+  background: rgba(102, 51, 153, 0.35);   /* translucent rebeccapurple, like the navbar */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.35);
+  color: #fff;
+}
+
+/* Gradient border ring (same as the navbar) */
+.auth-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Heading: same font and shadow as "Select Level" */
+.auth-card .auth-title {
+  margin: 0 0 20px;
   text-align: center;
-  font-family:
-    Andale Mono,
-    monospace;
+  font-family: "Audiowide", system-ui, sans-serif;
+  font-size: clamp(30px, 8vw, 40px);
+  font-weight: normal;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
 }
 
-a {
-  color: white;
+/* ---------- Form ---------- */
+
+.auth-card .auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-card .auth-input {
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  padding: 0 14px;
+  border: 2px solid rgba(233, 213, 255, 0.35);
+  border-radius: 12px;
+  background: rgba(12, 0, 11, 0.45);
+  color: #fff;
+  font-size: 16px;   /* 16px stops iOS zooming in on focus */
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-card .auth-input::placeholder {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.auth-card .auth-input:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+}
+
+/* Submit: same gradient-border style as PLAY / ACHIEVEMENTS / SHOP */
+.auth-card .confirmButton {
+  width: 100%;
+  height: auto;
+  margin: 8px 0 0;
+  padding: 10px 0;
+  color: #fff;
+  font-family: Andale Mono, monospace;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border: 3px solid transparent;
+  border-radius: 10px;
+  background:
+    linear-gradient(rebeccapurple, rebeccapurple) padding-box,
+    linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc) border-box;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.45);
+  text-shadow: 0 0 6px rgba(240, 171, 252, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-card .confirmButton:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 0 18px rgba(168, 85, 247, 0.7),
+    0 0 30px rgba(240, 171, 252, 0.35);
+}
+
+.auth-card .confirmButton:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.auth-card .confirmButton:disabled {
+  opacity: 0.6;
+  cursor: wait;
+  transform: none;
+}
+
+/* "Don't have an account? Sign up" */
+.auth-card .switchText {
+  margin: 18px 0 0;
   text-align: center;
-  font-family:
-    Andale Mono,
-    monospace;
+  font-family: Andale Mono, monospace;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
 }
 
-input {
-    border-radius: 15px;
-    border-color: black;
-    height: 30px;
-    margin-top: 10px;
-    padding: 5px 10px;
+.auth-card .switchText a {
+  color: #f0abfc;
+  font-weight: bold;
+  text-decoration: none;
+  white-space: nowrap;   /* keep "Sign up" on one line */
 }
 
-form {
-    text-align: center;
+.auth-card .switchText a:hover {
+  text-decoration: underline;
 }
 
-button {
-    border-radius: 30px;
-    border-color: black;
-    background-color: rgb(68, 20, 113);
-    color: white;
-    margin-top: 20px;
-    height: 30px;
-    width: 150px;
-}
+/* ---------- Error message ---------- */
 
-:root {
-  background-color: purple;
-}
-
-#form {
+.auth-card .auth-alert {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border: 1px solid rgba(248, 113, 113, 0.6);
+  border-radius: 10px;
+  background: rgba(127, 29, 29, 0.55);
+  color: #fecaca;
+  font-size: 14px;
   text-align: center;
 }
 
-#loginView,
-#loginBackground {
-    background-color: purple;
-}
+/* ---------- Phones: match the smaller level tiles ---------- */
 
-.switchText, 
-.switchText a {
-    color: white;
-}
+@media (max-width: 420px) {
+  #topNav,
+  .auth-card {
+    width: calc(3 * 84px + 2 * 14px);
+  }
 
-.confirmButton {
-    background-color: rgb(72, 35, 110);
-    border-radius: 10px;
+  .auth-card {
+    padding: 20px 16px 16px;
+  }
 }

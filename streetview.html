@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Street View Test</title>
     <style>
+        
         body {
             font-family: sans-serif;
             max-width: 900px;
@@ -24,9 +25,15 @@
             margin: 4px;
         }
     </style>
+    <link rel="stylesheet" href="styles/exitButton.css" />
 </head>
 
 <body>
+    <div class="puzzle-top-bar">
+  <a href="level-select.html" class="exit-btn" aria-label="Exit to level select">
+    <span class="arrow">←</span> Exit
+  </a>
+</div>
     <h1>Guess the continent</h1>
     <p id="info">Loading…</p>
     <div id="pano"></div>

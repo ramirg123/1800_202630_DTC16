@@ -16,9 +16,55 @@
   <!-- Other libraries go here -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script type="module" src="src/index.js"></script>
+  <!-- Player's character as the profile icon -->
+  <script src="src/characters.js"></script>
+  <script type="module" src="src/profileIcon.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <!-- style -->
   <style>
+    /* Navbar width: same as on the level select page */
+    #topNav {
+      width: calc(3 * 110px + 2 * 20px);
+      max-width: calc(100% - 24px);
+    }
+
+    @media (max-width: 420px) {
+      #topNav { width: calc(3 * 84px + 2 * 14px); }
+    }
+
+    /* Login button in the navbar: same pill style as the Back button on level select.
+       TopNav.css styles every link in the bar as a small icon, so undo that here. */
+    #topNav .nav-login-btn {
+      display: inline-flex;
+      align-items: center;
+      width: auto;
+      height: auto;
+      padding: 4px 14px;
+      color: #fff;
+      text-decoration: none;
+      font-family: Andale Mono, monospace;
+      font-size: 15px;
+      font-weight: bold;
+      border: 2px solid transparent;
+      border-radius: 16px;
+      background:
+        linear-gradient(rebeccapurple, rebeccapurple) padding-box,
+        linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc) border-box;
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.45);
+      text-shadow: 0 0 6px rgba(240, 171, 252, 0.5);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    #topNav .nav-login-btn:hover {
+      transform: translateY(-1px) scale(1.04);
+      box-shadow:
+        0 0 18px rgba(168, 85, 247, 0.7),
+        0 0 30px rgba(240, 171, 252, 0.35);
+    }
+    #topNav .nav-login-btn:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 2px;
+    }
+
     #image {
       text-align: center;
     }
@@ -44,13 +90,11 @@
   <!-- Jon's Section Start-->
 <!-- Jon's Section Start-->
 <nav id="topNav">
-  <button type="button" class="navItem" id="profileNav">
+  <button type="button" class="navItem" id="profileNav" aria-label="Profile">
     <i class="bi bi-person-circle"></i>
   </button>
 
-  <button type="button" class="navItem" id="settingsNav">
-    <i class="bi bi-gear"></i>
-  </button>
+  <a href="login.html" class="nav-login-btn" id="loginNav">Login</a>
 </nav>
 <!-- Jon's Section End -->
   <!-- Jon's Section End -->
@@ -69,10 +113,6 @@
     <a href="#" class="mainButtons">SHOP</a>
   </div>
 
-  <div id="profileMenu" class="hidden">
-    <p id="profileBackButton" class="inline-block">X</p>
-    <a href="login.html" id="loginButton">Login</a>
-  </div>
   <!-- Ramir's Section End -->
 
   <!-- Link to scripts of your own -->
