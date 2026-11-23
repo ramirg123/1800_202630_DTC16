@@ -1,0 +1,29 @@
+      body {
+        background: radial-gradient(
+          circle at 25% 30%,
+          #5b2a8c 0%,
+          #4a2878 45%,
+          #0f0612 100%
+        );
+      }
+      .title {
+        font-family: "Orbitron", sans-serif;
+        text-shadow: 4px 4px 0 #000;
+      }
+      .glow-btn {
+        display: inline-block;
+        padding: 0.4rem 1.1rem;
+        border: 2px solid #c79bff;
+        border-radius: 9999px;
+        background: rgba(120, 60, 190, 0.75);
+        color: white;
+        font-weight: 700;
+        box-shadow: 0 0 10px rgba(199, 155, 255, 0.6);
+        transition:
+          background 0.2s,
+          box-shadow 0.2s;
+      }
+      .glow-btn:hover {
+        background: rgba(150, 80, 220, 0.9);
+        box-shadow: 0 0 16px rgba(199, 155, 255, 0.9);
+      }
