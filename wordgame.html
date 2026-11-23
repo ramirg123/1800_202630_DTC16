@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Wordle Test</title>
+    <link rel="stylesheet" href="styles/background.css" />
     <style>
         body {
             font-family: sans-serif;
@@ -12,6 +13,7 @@
             margin: 20px auto;
             padding: 0 10px;
             text-align: center;
+            color: white;
         }
 
         .row {
@@ -96,16 +98,11 @@
             color: white;
         }
     </style>
-    <link rel="stylesheet" href="styles/exitButton.css" />
 </head>
 
 <body>
-    <div class="puzzle-top-bar">
-  <a href="level-select.html" class="exit-btn" aria-label="Exit to level select">
-    <span class="arrow">←</span> Exit
-  </a>
-</div>
     <h1>4-Letter Wordle</h1>
+    <span id="puzzleTimer" class="mx-10 my-auto">0:00</span>
     <div id="board"></div>
 
     <input id="guess" maxlength="4" autocomplete="off" />
@@ -115,6 +112,13 @@
     <button id="again" hidden>Play again</button>
 
     <h2 id="score">Wins: 0 / Played: 0</h2>
+
+    <div class="bg" aria-hidden="true">
+        <div class="blob one"></div>
+        <div class="blob two"></div>
+        <div class="blob three"></div>
+        <div class="blob four"></div>
+    </div>
 
     <script type="module">
 
@@ -289,6 +293,7 @@
         newGame();
 
     </script>
+    <script type="module" src="/src/puzzleTimer.js"></script>
 </body>
 
 </html>

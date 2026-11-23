@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Street View Test</title>
+    <link rel="stylesheet" href="styles/background.css" />
     <style>
         
         body {
@@ -12,6 +13,7 @@
             max-width: 900px;
             margin: 20px auto;
             padding: 0 10px;
+            color: white;
         }
 
         #pano {
@@ -24,6 +26,10 @@
             padding: 8px 12px;
             margin: 4px;
         }
+        .timer {
+            padding: 4px;
+            margin-left: 12px;
+        }
     </style>
     <link rel="stylesheet" href="styles/exitButton.css" />
 </head>
@@ -33,6 +39,7 @@
   <a href="level-select.html" class="exit-btn" aria-label="Exit to level select">
     <span class="arrow">←</span> Exit
   </a>
+  <span id="puzzleTimer" class="timer">0:00</span>
 </div>
     <h1>Guess the continent</h1>
     <p id="info">Loading…</p>
@@ -40,6 +47,13 @@
     <div id="choices"></div>
     <p id="message"></p>
     <button id="next" hidden>Next</button>
+
+    <div class="bg" aria-hidden="true">
+        <div class="blob one"></div>
+        <div class="blob two"></div>
+        <div class="blob three"></div>
+        <div class="blob four"></div>
+    </div>
 
     <script>
         const ROUNDS = 5;
@@ -136,6 +150,7 @@
     <!-- Replace YOUR_API_KEY with your Google Maps key -->
     <script async
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCbZFLZ60TutNIr2gCaD0d4uzDtWehMvxw&callback=initGame"></script>
+    <script type="module" src="/src/puzzleTimer.js"></script>
 </body>
 
 </html>
