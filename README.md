@@ -79,7 +79,7 @@ elmo-hikes/
 
 - Trail data and images are for demonstration purposes only.
 - Code snippets were adapted from resources such as [Stack Overflow](https://stackoverflow.com/) and [MDN Web Docs](https://developer.mozilla.org/).
-- Icons sourced from [FontAwesome](https://fontawesome.com/) and images from [Unsplash](https://unsplash.com/).
+- Icons sourced from [FontAwesome](https://fontawesome.com/) and images from [Unsplash](https://unsplash.com/) and [Flaticon](https://www.flaticon.com/free-icons/medal).
 
 ---
 

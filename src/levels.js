@@ -28,7 +28,8 @@ export const LEVELS = {
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ],
         start: { x: 100, y: 200 },
-        // doors: {}
+        badgeTimes: [30000, 45000, 60000],
+        doors: {}
     },
 
     2: {
@@ -60,7 +61,8 @@ export const LEVELS = {
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ],
         start: { x: 100, y: 400 },
-        doors: { 2: "wordgame.html", 3: "groupgame.html", 4: "streetview.html" }
+        doors: { 2: "wordgame.html", 3: "groupgame.html", 4: "streetview.html" },
+        badgeTimes: [30000, 45000, 60000]
     },
 
     3: {
@@ -92,7 +94,8 @@ export const LEVELS = {
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ],
         start: { x: 100, y: 400 },
-        doors: {}
+        doors: {},
+        badgeTimes: [30000, 45000, 60000]
     },
 
     4: {
@@ -138,3 +141,13 @@ export const LEVELS = {
     // }
 
 };
+
+// ---------- Badges ----------
+
+export function badgesFor(time, limits) {
+    let badges = 0;
+    for (let i = 0; i < limits.length; i++) {
+        if (time <= limits[i]) badges++;
+    }
+    return badges;
+}

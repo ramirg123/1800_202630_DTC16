@@ -1,5 +1,5 @@
 
-import { LEVELS } from "./levels.js";
+import { LEVELS, badgesFor } from "./levels.js";
 
 // ---------- Firestore ----------
 
@@ -374,10 +374,12 @@ async function winGame() {
     await lastSave;
     endTime = Date.now();
     const totalTime = endTime - runStartedAt;
+    const earned = level.badgeTimes ? badgesFor(totalTime, level.badgeTimes) : 0;
 
     await recordTime(levelNumber, totalTime);
 
-    location.href = "winscreen.html?time=" + encodeURIComponent(formatTime(totalTime));
+    location.href = "winscreen.html?time=" + encodeURIComponent(formatTime(totalTime)) +
+    "&badges=" + earned + "&level=" + levelNumber;
 }
 
 async function recordTime(levelNum, totalTime) {
