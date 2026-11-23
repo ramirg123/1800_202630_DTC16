@@ -1,7 +1,7 @@
 /* =========================================================
    Tutorial page (main.html)
    Matches the main menu / level select / login: blob
-   background (background.css), purple navbar (TopNav.css),
+   background (background.css),
    Audiowide heading, gradient-border cards and buttons.
    ========================================================= */
 
@@ -12,15 +12,8 @@ body {
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-/* ---------- Navbar: same width as the other pages ---------- */
+/* ---------- Done button: same style as the Back buttons ---------- */
 
-#topNav {
-  width: calc(3 * 110px + 2 * 20px);
-  max-width: calc(100% - 24px);
-}
-
-/* Back (navbar) and Done (bottom) share the level select button style */
-#topNav .back-btn,
 .done-btn {
   display: inline-flex;
   align-items: center;
@@ -44,7 +37,6 @@ body {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-#topNav .back-btn:hover,
 .done-btn:hover {
   transform: translateY(-1px) scale(1.04);
   box-shadow:
@@ -52,14 +44,10 @@ body {
     0 0 30px rgba(240, 171, 252, 0.35);
 }
 
-#topNav .back-btn:focus-visible,
 .done-btn:focus-visible {
   outline: 3px solid #fff;
   outline-offset: 3px;
 }
-
-#topNav .back-btn .arrow { transition: transform 0.2s ease; }
-#topNav .back-btn:hover .arrow { transform: translateX(-3px); }
 
 /* Done is the last thing on the page, so make it a bit bigger */
 .done-btn {
@@ -80,7 +68,7 @@ body {
 
 /* Heading: same font and shadow as "Select Level" */
 .tutorial-title {
-  margin: 28px 0 8px;
+  margin: 40px 0 8px;   /* no navbar above, so a bit more space at the top */
   font-family: "Audiowide", system-ui, sans-serif;
   font-size: clamp(32px, 6vw, 56px);
   font-weight: normal;
@@ -307,7 +295,6 @@ body {
 /* ---------- Phones: match the smaller level tiles ---------- */
 
 @media (max-width: 420px) {
-  #topNav,
   .steps {
     width: calc(3 * 84px + 2 * 14px);
   }
