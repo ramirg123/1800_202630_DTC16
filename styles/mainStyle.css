@@ -1,24 +1,309 @@
-:root {
-  background-color: rebeccapurple;
+/* =========================================================
+   Tutorial page (main.html)
+   Matches the main menu / level select / login: blob
+   background (background.css),
+   Audiowide heading, gradient-border cards and buttons.
+   ========================================================= */
+
+body {
+  overflow: auto;   /* background.css hides overflow; the tutorial needs to scroll */
+  min-height: 100vh;
+  color: #fff;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-h2 {
-  color: white;
-  text-align: center;
-  font-family:
-    Andale Mono,
-    monospace;
-}
+/* ---------- Done button: same style as the Back buttons ---------- */
 
-a {
-  color: rebeccapurple;
-  text-align: center;
+.done-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: auto;
+  height: auto;
+  padding: 4px 14px;
+  color: #fff;
   text-decoration: none;
-  background-color: white;
-  font-weight: 500;
-  padding: 8px;
-  border-radius: 10px;
-  font-family:
-    Andale Mono,
-    monospace;
+  font-family: Andale Mono, monospace;
+  font-size: 15px;
+  font-weight: bold;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  background:
+    linear-gradient(rebeccapurple, rebeccapurple) padding-box,
+    linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc) border-box;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.45);
+  text-shadow: 0 0 6px rgba(240, 171, 252, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.done-btn:hover {
+  transform: translateY(-1px) scale(1.04);
+  box-shadow:
+    0 0 18px rgba(168, 85, 247, 0.7),
+    0 0 30px rgba(240, 171, 252, 0.35);
+}
+
+.done-btn:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+/* Done is the last thing on the page, so make it a bit bigger */
+.done-btn {
+  margin-top: 28px;
+  padding: 8px 40px;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+/* ---------- Page ---------- */
+
+.tutorial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0 48px;
+}
+
+/* Heading: same font and shadow as "Select Level" */
+.tutorial-title {
+  margin: 40px 0 8px;   /* no navbar above, so a bit more space at the top */
+  font-family: "Audiowide", system-ui, sans-serif;
+  font-size: clamp(32px, 6vw, 56px);
+  font-weight: normal;
+  letter-spacing: 2px;
+  text-align: center;
+  text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.6);
+}
+
+.tutorial-intro {
+  margin: 0 0 24px;
+  font-family: Andale Mono, monospace;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.85);
+  text-align: center;
+}
+
+/* ---------- Step cards (same look as the navbar) ---------- */
+
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: calc(3 * 110px + 2 * 20px);
+  max-width: calc(100% - 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 22px 18px 18px;
+  border-radius: 20px;
+  background: rgba(102, 51, 153, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.35);
+  text-align: center;
+}
+
+/* Gradient border ring */
+.step::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Step number badge in the top-left corner */
+.step-number {
+  position: absolute;
+  top: -12px;
+  left: -8px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-family: "Audiowide", system-ui, sans-serif;
+  font-size: 18px;
+  border: 2px solid transparent;
+  background:
+    linear-gradient(rebeccapurple, rebeccapurple) padding-box,
+    linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc) border-box;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
+}
+
+.step h2 {
+  margin: 14px 0 6px;
+  font-family: "Audiowide", system-ui, sans-serif;
+  font-size: 20px;
+  font-weight: normal;
+  letter-spacing: 1px;
+}
+
+.step p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.step strong {
+  color: #f0abfc;
+}
+
+/* ---------- Pictures ---------- */
+
+.step-image {
+  display: block;
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  border: 1px solid #060606;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+}
+
+/* Arrow keys, laid out like a keyboard */
+.keys {
+  display: grid;
+  grid-template-columns: repeat(3, 34px);
+  grid-template-rows: repeat(2, 34px);
+  gap: 4px;
+  margin-top: 12px;
+}
+
+.key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.45);
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.key-up    { grid-column: 2; grid-row: 1; }
+.key-left  { grid-column: 1; grid-row: 2; }
+.key-down  { grid-column: 2; grid-row: 2; }
+.key-right { grid-column: 3; grid-row: 2; }
+
+/* Star counter, same as the pill in the level's top bar */
+.star-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 4px 14px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.star-counter img {
+  width: 22px;
+  height: 22px;
+}
+
+/* Door → puzzle */
+.door-to-puzzle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.door-to-puzzle .step-image {
+  width: 52%;
+  max-width: 168px;
+}
+
+.flow-arrow {
+  font-size: 24px;
+  font-weight: bold;
+  color: #f0abfc;
+}
+
+.mini-puzzle {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3px;
+  padding: 5px;
+  border-radius: 6px;
+  background: rgba(12, 0, 11, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mini-puzzle span {
+  padding: 3px 4px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 0.3px;
+}
+
+/* the "selected" tiles, like in Four by Four */
+.mini-puzzle span:nth-child(1),
+.mini-puzzle span:nth-child(6) {
+  background: #64339c;
+}
+
+/* Level complete */
+.win-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  max-width: 240px;
+  padding: 10px 0 14px;
+  border-radius: 6px;
+  background: rgba(12, 0, 11, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.win-card .star-counter {
+  margin-top: 0;
+}
+
+.win-text {
+  font-family: "Audiowide", system-ui, sans-serif;
+  font-size: 26px;
+  letter-spacing: 2px;
+  color: #f2c230;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* ---------- Phones: match the smaller level tiles ---------- */
+
+@media (max-width: 420px) {
+  .steps {
+    width: calc(3 * 84px + 2 * 14px);
+  }
+
+  .step {
+    padding: 20px 12px 14px;
+  }
+
+  .step p {
+    font-size: 14px;
+  }
 }

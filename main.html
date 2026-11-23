@@ -3,13 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>How to Play</title>
+
+    <!-- Same fonts, background and navbar as the main menu / level select -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/background.css">
     <link rel="stylesheet" href="styles/mainStyle.css">
-    <script type="module" src="./src/main.js"></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="module" src="./src/main.js"></script>
 </head>
 <body>
-    <h2 id="signInText">You signed in!</h2>
-    <a href="index.html">HOME</a>
+    <!-- Animated background layer (sits behind everything) -->
+    <div class="bg" aria-hidden="true">
+        <div class="blob one"></div>
+        <div class="blob two"></div>
+        <div class="blob three"></div>
+        <div class="blob four"></div>
+    </div>
+
+    <main class="tutorial">
+        <h1 class="tutorial-title">How to Play</h1>
+        <!-- src/main.js fills in the player's name -->
+        <p class="tutorial-intro" id="signInText">Welcome!</p>
+
+        <ol class="steps">
+            <li class="step">
+                <span class="step-number" aria-hidden="true">1</span>
+                <canvas class="step-image" data-scene="move" width="240" height="96"
+                    role="img" aria-label="Your character standing in a room"></canvas>
+                <div class="keys" aria-hidden="true">
+                    <span class="key key-up">↑</span>
+                    <span class="key key-left">←</span>
+                    <span class="key key-down">↓</span>
+                    <span class="key key-right">→</span>
+                </div>
+                <h2>Move around</h2>
+                <p>Each level is a 2D room seen from above. Use the <strong>arrow keys</strong> to walk around. Grey blocks are walls.</p>
+            </li>
+
+            <li class="step">
+                <span class="step-number" aria-hidden="true">2</span>
+                <canvas class="step-image" data-scene="stars" width="240" height="72"
+                    role="img" aria-label="Your character walking towards two stars"></canvas>
+                <div class="star-counter" aria-hidden="true">
+                    <img src="images/star.png" alt=""> 1 / 3
+                </div>
+                <h2>Collect the stars</h2>
+                <p>Walk over a star to pick it up. The counter at the top shows how many you have.</p>
+            </li>
+
+            <li class="step">
+                <span class="step-number" aria-hidden="true">3</span>
+                <div class="door-to-puzzle">
+                    <canvas class="step-image" data-scene="door" width="168" height="72"
+                        role="img" aria-label="Your character next to a brown door"></canvas>
+                    <span class="flow-arrow" aria-hidden="true">→</span>
+                    <div class="mini-puzzle" role="img" aria-label="A trivia puzzle">
+                        <span>MARS</span><span>POKER</span><span>PIANO</span><span>SNOW</span>
+                        <span>SNAP</span><span>VENUS</span><span>FOOT</span><span>LOCK</span>
+                    </div>
+                </div>
+                <h2>Doors open puzzles</h2>
+                <p>Walk into a <strong>door</strong> to start a trivia puzzle. Solve it and you go straight back to the level, where that door is now open.</p>
+            </li>
+
+            <li class="step">
+                <span class="step-number" aria-hidden="true">4</span>
+                <div class="win-card" aria-hidden="true">
+                    <div class="star-counter">
+                        <img src="images/star.png" alt=""> 3 / 3
+                    </div>
+                    <span class="win-text">YOU WIN</span>
+                </div>
+                <h2>Finish the level</h2>
+                <p>Collect <strong>every star</strong> to complete the level. Your time is saved, so try again to beat it!</p>
+            </li>
+        </ol>
+
+        <a href="index.html" class="done-btn">Done</a>
+    </main>
+
+    <script src="src/characters.js"></script>
+    <script src="src/tutorial.js"></script>
 </body>
 </html>
