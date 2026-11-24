@@ -103,6 +103,7 @@ for (let row = 0; row < room.length; row++) {
 
 function startGame() {
     sprite = new component(16, 16, "red", startX, startY);
+    sprite.character = selectedCharacter;
     gameArea.start();
     document.getElementById("star-total").textContent = totalStars;
     document.getElementById("star-count").textContent = starsCollected;
@@ -225,6 +226,8 @@ function component(width, height, colour, x, y, type) {
         let ctx = gameArea.context;
         if (this.type == "image") {
             ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        } else if (this.character) {
+            drawCharacter(ctx, this.character, this.x - 2, this.y - 4, 20);
         } else {
             ctx.fillStyle = colour;
             ctx.fillRect(this.x, this.y, this.width, this.height);

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,9 +25,16 @@
       --blob-4: #3b2769;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    html, body { height: 100%; }
+    html,
+    body {
+      height: 100%;
+    }
 
     body {
       min-height: 100vh;
@@ -88,9 +96,23 @@
       animation: drift-a 31s ease-in-out infinite alternate-reverse;
     }
 
-    @keyframes drift-a { to { transform: translate(18vw, 14vh) scale(1.15); } }
-    @keyframes drift-b { to { transform: translate(-20vw, 18vh) scale(0.9); } }
-    @keyframes drift-c { to { transform: translate(16vw, -16vh) scale(1.2); } }
+    @keyframes drift-a {
+      to {
+        transform: translate(18vw, 14vh) scale(1.15);
+      }
+    }
+
+    @keyframes drift-b {
+      to {
+        transform: translate(-20vw, 18vh) scale(0.9);
+      }
+    }
+
+    @keyframes drift-c {
+      to {
+        transform: translate(16vw, -16vh) scale(1.2);
+      }
+    }
 
     /* Fine grain to stop the gradients from banding */
     .bg::after {
@@ -103,7 +125,9 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .blob { animation: none; }
+      .blob {
+        animation: none;
+      }
     }
 
     /* ---------- Page content ---------- */
@@ -138,6 +162,7 @@
       text-shadow: 0 0 6px rgba(240, 171, 252, 0.5);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
+
     .back-btn:hover {
       /* hover: slightly lighter, no glow (same as the level tiles) */
       background:
@@ -145,6 +170,7 @@
         linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc) border-box;
       box-shadow: none;
     }
+
     /* Navbar is exactly as wide as the row of level tiles (3 tiles + 2 gaps) */
     #topNav {
       width: calc(3 * 110px + 2 * 20px);
@@ -161,8 +187,14 @@
         linear-gradient(rebeccapurple, rebeccapurple) padding-box,
         linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc) border-box;
     }
-    .back-btn .arrow { transition: transform 0.2s ease; }
-    .back-btn:hover .arrow { transform: translateX(-3px); }
+
+    .back-btn .arrow {
+      transition: transform 0.2s ease;
+    }
+
+    .back-btn:hover .arrow {
+      transform: translateX(-3px);
+    }
 
 
 
@@ -191,20 +223,42 @@
       cursor: pointer;
       box-shadow: 0 6px 0 #3b1a5e;
       transition: transform 0.08s, box-shadow 0.08s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
-    .level-btn:hover { background: #7d44bd; }
-    .level-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #3b1a5e; }
-    .level-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+    .level-btn:hover {
+      background: #7d44bd;
+    }
+
+    .level-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #3b1a5e;
+    }
+
+    .level-btn:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 3px;
+    }
 
     .level-btn.locked {
       position: relative;
       background: #3a1d55;
-      color: rgba(255, 255, 255, 0.35);   /* faded level number */
+      color: rgba(255, 255, 255, 0.35);
+      /* faded level number */
       cursor: not-allowed;
       box-shadow: 0 6px 0 #24103a;
     }
-    .level-btn.locked:hover { background: #3a1d55; }
-    .level-btn.locked:active { transform: none; }
+
+    .level-btn.locked:hover {
+      background: #3a1d55;
+    }
+
+    .level-btn.locked:active {
+      transform: none;
+    }
 
     /* Plain white lock in the top-right corner of locked tiles */
     .lock-icon {
@@ -215,14 +269,52 @@
       height: 22px;
     }
 
+    .level-badges {
+      display: flex;
+      gap: 3px;
+      margin-top: 6px;
+    }
+
+    .mini-badge {
+      width: 18px;
+      height: 18px;
+    }
+
+    .mini-badge.unearned {
+      filter: grayscale(100%);
+      opacity: 0.35;
+    }
+
     @media (max-width: 420px) {
-      .level-grid { grid-template-columns: repeat(3, 84px); gap: 14px; }
-      #topNav { width: calc(3 * 84px + 2 * 14px); }
-      .level-btn { height: 84px; font-size: 30px; }
-      .lock-icon { top: 7px; right: 7px; width: 17px; height: 17px; }
+      .level-grid {
+        grid-template-columns: repeat(3, 84px);
+        gap: 14px;
+
+        .mini-badge {
+          width: 14px;
+          height: 14px;
+        }
+      }
+
+      #topNav {
+        width: calc(3 * 84px + 2 * 14px);
+      }
+
+      .level-btn {
+        height: 84px;
+        font-size: 30px;
+      }
+
+      .lock-icon {
+        top: 7px;
+        right: 7px;
+        width: 17px;
+        height: 17px;
+      }
     }
   </style>
 </head>
+
 <body>
   <!-- Animated background layer (sits behind everything) -->
   <div class="bg" aria-hidden="true">
@@ -246,8 +338,10 @@
   <div class="level-grid" id="level-grid"></div>
 
   <script type="module">
-    import { LEVELS } from "./src/levels.js";
+    import { LEVELS, badgesFor } from "./src/levels.js";
     import { onAuthReady } from "./src/authentication.js";
+    import { db } from "./src/firebaseConfig.js";
+    import { collection, getDocs } from "firebase/firestore";
 
     // Who is signed in (null = nobody). Levels need an account, so clicks wait for this.
     let currentUser = null;
@@ -255,6 +349,7 @@
       onAuthReady(function (user) {
         currentUser = user;
         resolve();
+        if (user) loadBadges(user);
       });
     });
 
@@ -272,6 +367,40 @@
         <rect x="4.5" y="10.5" width="15" height="11" rx="2.5" fill="#fff"/>
       </svg>`;
 
+    function badgeRow(earned) {
+      let html = '<div class="level-badges">';
+      for (let b = 0; b < 3; b++) {
+        if (b < earned) {
+          html += '<img src="images/badge.png" class="mini-badge" alt="">';
+        } else {
+          html += '<img src="images/badge.png" class="mini-badge unearned" alt="">';
+        }
+      }
+      html += '</div>';
+      return html;
+    }
+
+    // Load the player's best time on each level, then add badges to its button
+    async function loadBadges(user) {
+      const bestTimes = {};
+      const snaps = await getDocs(collection(db, "users", user.uid, "levels"));
+      snaps.forEach(function (d) {
+        bestTimes[d.id] = d.data().time;
+      });
+
+      for (let i = 1; i <= TOTAL_SLOTS; i++) {
+        const btn = playableButtons[i];
+        if (!btn) continue;   // locked or doesn't exist: no badges
+
+        let earned = 0;
+        if (bestTimes[i] != undefined && LEVELS[i].badgeTimes) {
+          earned = badgesFor(bestTimes[i], LEVELS[i].badgeTimes);
+        }
+        btn.innerHTML += badgeRow(earned);
+      }
+    }
+
+    const playableButtons = {};
     const grid = document.getElementById("level-grid");
 
     for (let i = 1; i <= TOTAL_SLOTS; i++) {
@@ -280,7 +409,8 @@
 
       // Playable only if the level exists AND the player has unlocked it
       if (i <= AVAILABLE && i <= unlocked) {
-        btn.textContent = i;
+        btn.innerHTML = "<span>" + i + "</span>";
+        playableButtons[i] = btn;
         btn.setAttribute("aria-label", "Play level " + i);
         // level.html can read this with: new URLSearchParams(location.search).get("level")
         btn.addEventListener("click", async () => {
@@ -302,4 +432,5 @@
     }
   </script>
 </body>
+
 </html>
