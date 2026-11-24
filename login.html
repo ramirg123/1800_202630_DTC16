@@ -6,85 +6,117 @@
     <title>Login Page</title>
     <!-- Jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- Same fonts, background and navbar as the main menu / level select -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles/background.css" />
+    <link rel="stylesheet" href="styles/TopNav.css" />
     <link rel="stylesheet" href="styles/loginStyle.css" />
   </head>
   <body>
-    <div class="container py-5" id="loginBackground" style="max-width: 420px">
-      <!-- Alerts -->
-      <div id="authAlert" class="alert alert-danger d-none" role="alert"></div>
+    <!-- Animated background layer (sits behind everything) -->
+    <div class="bg" aria-hidden="true">
+      <div class="blob one"></div>
+      <div class="blob two"></div>
+      <div class="blob three"></div>
+      <div class="blob four"></div>
+    </div>
 
-      <!-- Login -->
-      <div id="loginView">
-        <h3 class="mb-3 text-center" style="color: white;">Login</h3>
-        <form id="loginForm" novalidate>
-          <div class="mb-3">
+    <!-- Navbar: Back on the left, like level select -->
+    <nav id="topNav">
+      <a href="index.html" class="back-btn"><span class="arrow">←</span> Back</a>
+    </nav>
+
+    <main class="auth-page">
+      <div class="auth-card">
+        <!-- Alerts -->
+        <div id="authAlert" class="auth-alert d-none" role="alert"></div>
+
+        <!-- Login -->
+        <div id="loginView">
+          <h1 class="auth-title">Login</h1>
+          <form id="loginForm" class="auth-form" novalidate>
             <input
               type="email"
               id="loginEmail"
-              class="form-control"
+              class="auth-input"
               placeholder="Email"
+              aria-label="Email"
+              autocomplete="email"
               required
             />
-          </div>
-          <div class="mb-3">
             <input
               type="password"
               id="loginPassword"
-              class="form-control"
+              class="auth-input"
               placeholder="Password"
+              aria-label="Password"
+              autocomplete="current-password"
               required
             />
-          </div>
-          <button type="submit" class="confirmButton btn-primary w-100">Login</button>
-        </form>
-        <small class="d-block mt-3 text-center switchText">
-          Don’t have an account?
-          <a href="#" id="toSignup">Sign up</a>
-        </small>
-      </div>
+            <button type="submit" class="confirmButton">LOGIN</button>
+          </form>
+          <p class="switchText">
+            Don’t have an account?
+            <a href="#" id="toSignup">Sign up</a>
+          </p>
+        </div>
 
-      <!-- Signup -->
-      <div id="signupView" class="d-none">
-        <h3 class="mb-3 text-center" style="color: white;">Sign Up</h3>
-        <form id="signupForm" novalidate>
-          <div class="mb-3">
+        <!-- Signup -->
+        <div id="signupView" class="d-none">
+          <h1 class="auth-title">Sign Up</h1>
+          <form id="signupForm" class="auth-form" novalidate>
             <input
               type="text"
               id="signupName"
-              class="form-control"
+              class="auth-input"
               placeholder="First and Last Name"
               aria-label="Full name"
+              autocomplete="name"
               required
             />
-          </div>
-          <div class="mb-3">
             <input
               type="email"
               id="signupEmail"
-              class="form-control"
+              class="auth-input"
               placeholder="Email"
+              aria-label="Email"
+              autocomplete="email"
               required
             />
-          </div>
-          <div class="mb-3">
             <input
               type="password"
               id="signupPassword"
-              class="form-control"
+              class="auth-input"
               placeholder="Password"
+              aria-label="Password"
+              autocomplete="new-password"
               required
             />
-          </div>
-          <button type="submit" class="confirmButton btn-success w-100">
-            Create Account
-          </button>
-        </form>
-        <small class="d-block mt-3 text-center switchText">
-          Already have an account?
-          <a href="#" id="toLogin">Login</a>
-        </small>
+            <button type="submit" class="confirmButton">CREATE ACCOUNT</button>
+          </form>
+          <p class="switchText">
+            Already have an account?
+            <a href="#" id="toLogin">Login</a>
+          </p>
+        </div>
+
+        <!-- Account (shown instead of the forms when already signed in) -->
+        <div id="accountView" class="d-none">
+          <h1 class="auth-title">Account</h1>
+          <p class="account-label">Signed in as</p>
+          <p class="account-name" id="accountName"></p>
+          <p class="account-email" id="accountEmail"></p>
+          <button type="button" class="confirmButton" id="signOutBtn">SIGN OUT</button>
+          <p class="switchText">
+            Want a different look?
+            <a href="profile.html">Change character</a>
+          </p>
+        </div>
       </div>
-    </div>
+    </main>
 
     <script type="module" src="/src/app.js"></script>
 

@@ -35,6 +35,21 @@ onAuthReady(async function (user) {
     const snap = await getDoc(userRef);
     let run = snap.exists() ? snap.data().run : null;
 
+    // Character chosen on an earlier visit (saved in Firestore)
+    const savedName = snap.exists() ? snap.data().character : null;
+    const savedCharacter = characters.find(function (c) { return c.name === savedName; });
+    if (!savedCharacter) {
+        // No character on this account yet: pick one first, then come back to this level
+        forgetSavedCharacter();
+        window.location.href = "profile.html?setup=1&next=" +
+            encodeURIComponent("level.html?level=" + levelNumber);
+        return;
+    }
+    selectedCharacter = savedCharacter;
+    saveCharacter(savedCharacter);   // keep localStorage in sync for other pages
+    markSelected(savedCharacter);
+    showCharacterOnButton(savedCharacter);
+
     if (!resuming || !run || run.level != levelNumber) {
         run = { level: levelNumber, startedAt: Date.now(), stars: [], openDoors: [] };
         await updateDoc(userRef, { run: run });
@@ -89,7 +104,6 @@ for (let row = 0; row < room.length; row++) {
 function startGame() {
     sprite = new component(16, 16, "red", startX, startY);
     gameArea.start();
-    openCharSelect();
     document.getElementById("star-total").textContent = totalStars;
     document.getElementById("star-count").textContent = starsCollected;
 }
@@ -122,6 +136,13 @@ const gameArea = {
 
 // ---------- Tiles ----------
 
+// Checkerboard floor in the site's dark purples (same family as the blob background)
+const FLOOR_LIGHT = "#32124b";
+const FLOOR_DARK = "#1c0828";
+
+// Walls: one plain colour, pure black
+const WALL_COLOUR = "#000000";
+
 function drawRoom() {
     let ctx = gameArea.context;
     for (let row = 0; row < room.length; row++) {
@@ -129,9 +150,15 @@ function drawRoom() {
             let x = col * TILE;
             let y = row * TILE;
 
+            // ---------- Floor (chess board) ----------
+            if (room[row][col] != 1) {
+                ctx.fillStyle = (row + col) % 2 == 0 ? FLOOR_LIGHT : FLOOR_DARK;
+                ctx.fillRect(x, y, TILE, TILE);
+            }
+
             // ---------- Walls ----------
             if (room[row][col] == 1) {
-                ctx.fillStyle = "gray";
+                ctx.fillStyle = WALL_COLOUR;
                 ctx.fillRect(x, y, TILE, TILE);
 
                 // ---------- Stars ----------
@@ -142,7 +169,7 @@ function drawRoom() {
             } else if (room[row][col] == OPEN_DOOR) {
                 ctx.fillStyle = "#5c3a1e";
                 ctx.fillRect(x, y, TILE, TILE);
-                ctx.fillStyle = "#2b2b2c";
+                ctx.fillStyle = "#0c000b";
                 ctx.fillRect(x + 4, y + 4, TILE - 8, TILE - 4);
 
                 // ---------- Open Doors ----------
@@ -232,6 +259,9 @@ function updateGameArea() {
 
     sprite.update();
 
+    // Why setHTML?? can you just use textContent?
+    document.getElementById("timer").setHTML(formatTime(Date.now() - runStartedAt))
+
     let door = underDoor(sprite);
     let page = level.doors[door];
 
@@ -320,6 +350,8 @@ characters.forEach(function (character) {
     preview.height = 50;
     drawCharacter(preview.getContext("2d"), character, 0, 0, 50);
 
+    option.dataset.name = character.name;
+
     const label = document.createElement("span");
     label.textContent = character.name;
 
@@ -329,15 +361,50 @@ characters.forEach(function (character) {
     option.addEventListener("click", function () {
         selectedCharacter = character;
         saveCharacter(character);
-        document.querySelectorAll(".char-option").forEach(function (o) {
-            o.classList.remove("selected");
-        });
-        option.classList.add("selected");
+        markSelected(character);
+        showCharacterOnButton(character);   // navbar icon updates right away
+        // Remember the choice on the account so the picker doesn't open again
+        if (userRef) {
+            lastSave = setDoc(userRef, { character: character.name }, { merge: true });
+        }
         closeCharSelect();
     });
 
     charGrid.appendChild(option);
 });
+
+// Navbar character button: show the chosen character instead of the
+// person icon (same look as the profile icon on the main menu)
+function showCharacterOnButton(character) {
+    const button = document.getElementById("char-btn");
+    if (!button || !character) return;
+
+    const cssSize = 32;
+    const scale = window.devicePixelRatio || 1;   // keeps the pixel art sharp
+    const canvas = document.createElement("canvas");
+    canvas.className = "nav-character";
+    canvas.width = cssSize * scale;
+    canvas.height = cssSize * scale;
+
+    const ctx = canvas.getContext("2d");
+    ctx.scale(scale, scale);
+    if (character.ninja) {
+        drawCharacter(ctx, character, 5, 6, 20);   // headband tails stick out to the right
+    } else {
+        drawCharacter(ctx, character, 4, 4, 24);
+    }
+
+    button.replaceChildren(canvas);
+    button.title = character.name;
+    button.setAttribute("aria-label", "Change character (now " + character.name + ")");
+}
+
+// Highlight the chosen character in the popup
+function markSelected(character) {
+    document.querySelectorAll(".char-option").forEach(function (o) {
+        o.classList.toggle("selected", o.dataset.name === character.name);
+    });
+}
 
 function openCharSelect() {
     if (!charSelect.hidden) return;
@@ -376,10 +443,18 @@ async function winGame() {
     const totalTime = endTime - runStartedAt;
     const earned = level.badgeTimes ? badgesFor(totalTime, level.badgeTimes) : 0;
 
-    await recordTime(levelNumber, totalTime);
+    const isNewBest = await recordTime(levelNumber, totalTime);
 
-    location.href = "winscreen.html?time=" + encodeURIComponent(formatTime(totalTime)) +
-        "&badges=" + earned + "&level=" + levelNumber;
+    // Everything the victory page shows
+    const result = new URLSearchParams({
+        time: formatTime(totalTime),
+        level: levelNumber,
+        stars: starsCollected,
+        total: totalStars,
+        best: isNewBest ? "1" : "0",
+        badges: earned
+    });
+    location.href = "winscreen.html?" + result.toString();
 }
 
 async function recordTime(levelNum, totalTime) {
@@ -397,11 +472,12 @@ async function recordTime(levelNum, totalTime) {
     }
 
     if (snap.exists() && snap.data().time <= totalTime) {
-        return;   // existing time is as good or better
+        return false;   // existing time is as good or better
     }
 
     await setDoc(levelRef, {
         time: totalTime,
         timeText: formatTime(totalTime)
     }, { merge: true });
+    return true;        // new best time
 }

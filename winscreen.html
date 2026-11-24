@@ -6,27 +6,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Level Complete</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- Same fonts and background as the main menu / level select -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/background.css" />
+  <link rel="stylesheet" href="styles/winscreen.css" />
 </head>
 
 <body>
-  <div class="text-center mt-10">
-    <h1 class="text-4xl font-bold">YOU WIN</h1>
+  <!-- Animated background layer (sits behind everything) -->
+  <div class="bg" aria-hidden="true">
+    <div class="blob one"></div>
+    <div class="blob two"></div>
+    <div class="blob three"></div>
+    <div class="blob four"></div>
   </div>
-  <div class="text-center mt-20">
-    <p class="text-xl font-bold mb-6">
-      Time: <span id="timeDisplay"></span>
-    </p>
 
-    <div id="badges" class="flex justify-center gap-3 mb-20">
-      <img src="images/badge.png" class="badge w-12 h-12 grayscale opacity-35" alt="">
-      <img src="images/badge.png" class="badge w-12 h-12 grayscale opacity-35" alt="">
-      <img src="images/badge.png" class="badge w-12 h-12 grayscale opacity-35" alt="">
+  <main class="victory">
+    <!-- The player's character, with stars bursting around it -->
+    <div class="hero" aria-hidden="true">
+      <span class="sparkle s1"></span>
+      <span class="sparkle s2"></span>
+      <span class="sparkle s3"></span>
+      <span class="sparkle s4"></span>
+      <canvas id="hero-character" width="112" height="112"></canvas>
     </div>
 
-    <a href="level-select.html" class="text-xl border-2 rounded-full p-4 mt-20">Level Select</a>
-  </div>
+    <p class="level-label" id="level-label">Level complete</p>
+    <h1 class="victory-title">YOU WIN!</h1>
 
+    <section class="result-card" aria-label="Your result">
+      <!-- one star image per star in the level -->
+      <div class="stars-row" id="stars-row" aria-hidden="true"></div>
+      <p class="stars-text" id="stars-text"></p>
+
+      <div class="badges-row" id="badges">
+        <img src="images/badge.png" class="badge unearned" alt="">
+        <img src="images/badge.png" class="badge unearned" alt="">
+        <img src="images/badge.png" class="badge unearned" alt="">
+      </div>
+
+      <dl class="stats">
+        <div class="stat">
+          <dt>Time</dt>
+          <dd id="timeDisplay">–</dd>
+        </div>
+        <div class="stat">
+          <dt>Best</dt>
+          <dd id="bestDisplay">–</dd>
+        </div>
+      </dl>
+
+      <p class="new-best" id="new-best" hidden>New best time!</p>
+    </section>
+
+    <div class="actions">
+      <a href="level-select.html" class="win-btn primary" id="next-btn" hidden>Next Level →</a>
+      <a href="level-select.html" class="win-btn" id="replay-btn" hidden>Play Again</a>
+      <a href="level-select.html" class="win-btn" id="select-btn">Level Select</a>
+    </div>
+  </main>
+
+  <script src="src/characters.js"></script>
   <script type="module" src="/src/winscreen.js"></script>
 </body>
 

@@ -80,11 +80,19 @@
             min-height: 1.2em;
         }
     </style>
+    <link rel="stylesheet" href="styles/exitButton.css" />
 </head>
 
 <body>
+    <div class="puzzle-top-bar">
+    <a href="level-select.html" class="exit-btn" aria-label="Exit to level select">
+        <span class="arrow">←</span> Exit
+    </a>
+</div>
     <h1>Four by Four</h1>
     <p>Find four groups of four!</p>
+
+    <span id="puzzleTimer" class="timer">0:00</span>
 
     <div id="solved"></div>
     <div id="board"></div>
@@ -299,6 +307,7 @@
         newGame();
 
     </script>
+    <script type="module" src="/src/puzzleTimer.js"></script>
 </body>
 
 </html>

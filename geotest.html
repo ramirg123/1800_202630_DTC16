@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Geography Tester</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 10px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            min-height: 56px;
+            margin: 10px 0;
+            padding: 14px;
+            font-size: 18px;
+        }
+
+        /* keep hidden buttons hidden */
+        button[hidden] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Geography Tester</h1>
+    <p id="info"></p>
+    <p id="question"></p>
+    <div id="choices"></div>
+    <p id="message"></p>
+    <button id="next" hidden>Next</button>
+
+    <script>
+        const PAIRS = 5;   // 5 rounds each is a pair of countries with 2 questions
+
+        // [country, population in millions World Bank 2025, capital, capital latitude and negative is south]
+        const DATA = [
+            ["India", 1464, "New Delhi", 28.6], ["China", 1407, "Beijing", 39.9],
+            ["United States", 342, "Washington, D.C.", 38.9], ["Indonesia", 286, "Jakarta", -6.2],
+            ["Pakistan", 255, "Islamabad", 33.7], ["Nigeria", 238, "Abuja", 9.1],
+            ["Brazil", 213, "Brasília", -15.8], ["Russia", 144, "Moscow", 55.8],
+            ["Mexico", 132, "Mexico City", 19.4], ["Japan", 123, "Tokyo", 35.7],
+            ["Egypt", 118, "Cairo", 30.0], ["Vietnam", 102, "Hanoi", 21.0],
+            ["Germany", 83.5, "Berlin", 52.5], ["Thailand", 71.6, "Bangkok", 13.8],
+            ["United Kingdom", 69.5, "London", 51.5], ["France", 68.7, "Paris", 48.9],
+            ["South Africa", 64.7, "Pretoria", -25.7], ["Italy", 58.9, "Rome", 41.9],
+            ["Kenya", 57.5, "Nairobi", -1.3], ["South Korea", 51.7, "Seoul", 37.6],
+            ["Colombia", 53.4, "Bogotá", 4.7], ["Spain", 49.4, "Madrid", 40.4],
+            ["Argentina", 45.9, "Buenos Aires", -34.6], ["Canada", 41.7, "Ottawa", 45.4],
+            ["Peru", 34.6, "Lima", -12.0], ["Australia", 27.6, "Canberra", -35.3],
+            ["Chile", 19.9, "Santiago", -33.4], ["Netherlands", 18.1, "Amsterdam", 52.4],
+            ["Sweden", 10.6, "Stockholm", 59.3], ["Norway", 5.61, "Oslo", 59.9],
+            ["New Zealand", 5.32, "Wellington", -41.3], ["Iceland", 0.39, "Reykjavík", 64.1],
+            ["Bangladesh", 176, "Dhaka", 23.8], ["Ethiopia", 135, "Addis Ababa", 9.0],
+            ["Philippines", 117, "Manila", 14.6], ["Iran", 92.4, "Tehran", 35.7],
+            ["Turkey", 85.9, "Ankara", 39.9], ["Morocco", 38.4, "Rabat", 34.0],
+            ["Poland", 36.4, "Warsaw", 52.2], ["Malaysia", 36, "Kuala Lumpur", 3.1],
+            ["Ghana", 35.1, "Accra", 5.6], ["Saudi Arabia", 37, "Riyadh", 24.7],
+            ["Venezuela", 28.5, "Caracas", 10.5], ["Cuba", 10.9, "Havana", 23.1],
+            ["Portugal", 10.8, "Lisbon", 38.7], ["Finland", 5.65, "Helsinki", 60.2],
+            ["Ireland", 5.48, "Dublin", 53.3], ["Uruguay", 3.38, "Montevideo", -34.9],
+        ];
+
+        // Give each piece of data a name, and work out the distance from the equator once
+        // (1 degree of latitude is about 111 km)
+        const COUNTRIES = DATA.map(([name, pop, capital, lat]) => ({
+            name, pop, capital, lat,
+            km: Math.round(Math.abs(lat) * 111),
+        }));
+
+        let pairNum = 0, step = 0, score = 0, canGuess = false, pair;
+
+        const info = document.getElementById("info");
+        const question = document.getElementById("question");
+        const choices = document.getElementById("choices");
+        const message = document.getElementById("message");
+        const nextBtn = document.getElementById("next");
+
+        function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
+
+        // Question 1 compares population, question 2 compares distance from the equator
+        function amount(country) {
+            return step === 1 ? country.pop : country.km;
+        }
+
+        // A pair is only used if, for both questions, the bigger one is at least 5% bigger
+        function clearlyDifferent(x, y) {
+            return Math.max(x, y) > Math.min(x, y) * 1.05;
+        }
+
+        function answerText(c) {
+            if (step === 1) return `${c.name}: about ${c.pop} million people`;
+            return `${c.capital}, ${c.name}: about ${c.km.toLocaleString()} km from the equator`;
+        }
+
+        function nextRound() {
+            if (step === 2 && pairNum === PAIRS) { pairNum = 0; score = 0; }   // play again
+
+            if (step === 2 || step === 0) {
+                // New pair of countries, starting with the population question
+                pairNum++;
+                step = 1;
+                do {
+                    pair = [pick(COUNTRIES), pick(COUNTRIES)];
+                } while (pair[0] === pair[1] ||
+                !clearlyDifferent(pair[0].pop, pair[1].pop) ||
+                    !clearlyDifferent(pair[0].km, pair[1].km));
+            } else {
+                step = 2;   // same pair, equator question
+            }
+
+            canGuess = true;
+            nextBtn.hidden = true;
+            message.textContent = "";
+            info.textContent = `Round ${pairNum} of ${PAIRS} (question ${step} of 2). Score: ${score}`;
+            question.textContent = step === 1
+                ? "Which country has the larger population?"
+                : "Whose capital city is further from the equator?";
+
+            // One button per country
+            choices.innerHTML = "";
+            for (const country of pair) {
+                const btn = document.createElement("button");
+                btn.textContent = step === 1 ? country.name : `${country.name} (${country.capital})`;
+                btn.onclick = () => guess(country);
+                choices.appendChild(btn);
+            }
+        }
+
+        function guess(country) {
+            if (!canGuess) return;
+            canGuess = false;
+            const winner = amount(pair[0]) > amount(pair[1]) ? pair[0] : pair[1];
+            const right = country === winner;
+            if (right) score++;
+
+            message.textContent = `${right ? "Right!" : "Wrong."} ${answerText(pair[0])} | ${answerText(pair[1])}`;
+            info.textContent = `Round ${pairNum} of ${PAIRS} (question ${step} of 2). Score: ${score}`;
+
+            const finished = pairNum === PAIRS && step === 2;
+            if (finished) message.textContent += ` Final score: ${score}/${PAIRS * 2}.`;
+            nextBtn.textContent = finished ? "Play again" : "Next";
+            nextBtn.hidden = false;
+        }
+
+        nextBtn.onclick = nextRound;
+        nextRound();
+    </script>
+</body>
+
+</html>

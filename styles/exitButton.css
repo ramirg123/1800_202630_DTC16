@@ -1,0 +1,37 @@
+/* Exit button for puzzle pages: same look as the Back button on level-select */
+.puzzle-top-bar {
+  display: flex;
+  justify-content: flex-start;
+  padding: 12px 0;
+}
+
+.exit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  color: #fff;
+  text-decoration: none;
+  font-family: Andale Mono, monospace;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  background:
+    linear-gradient(rebeccapurple, rebeccapurple) padding-box,
+    linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc) border-box;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.45);
+  text-shadow: 0 0 6px rgba(240, 171, 252, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.exit-btn:hover {
+  /* hover: slightly lighter, no glow (same as the level tiles) */
+  background:
+    linear-gradient(#7d44bd, #7d44bd) padding-box,
+    linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc) border-box;
+  box-shadow: none;
+}
+.exit-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.exit-btn .arrow { transition: transform 0.2s ease; }
+.exit-btn:hover .arrow { transform: translateX(-3px); }

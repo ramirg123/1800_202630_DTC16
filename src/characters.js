@@ -141,6 +141,14 @@ function saveCharacter(character) {
     }
 }
 
+// Clear the local copy (used when the signed-in account has no character saved
+// in Firebase, so a previous account's choice never shows up)
+function forgetSavedCharacter() {
+    try {
+        localStorage.removeItem("selectedCharacter");
+    } catch (e) { }
+}
+
 function getSavedCharacter() {
     let name = null;
     try {

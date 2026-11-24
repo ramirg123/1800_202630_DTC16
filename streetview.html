@@ -7,6 +7,7 @@
     <title>Street View Test</title>
     <link rel="stylesheet" href="styles/background.css" />
     <style>
+        
         body {
             font-family: sans-serif;
             max-width: 900px;
@@ -25,10 +26,21 @@
             padding: 8px 12px;
             margin: 4px;
         }
+        .timer {
+            padding: 4px;
+            margin-left: 12px;
+        }
     </style>
+    <link rel="stylesheet" href="styles/exitButton.css" />
 </head>
 
 <body>
+    <div class="puzzle-top-bar">
+  <a href="level-select.html" class="exit-btn" aria-label="Exit to level select">
+    <span class="arrow">←</span> Exit
+  </a>
+  <span id="puzzleTimer" class="timer">0:00</span>
+</div>
     <h1>Guess the continent</h1>
     <p id="info">Loading…</p>
     <div id="pano"></div>
@@ -138,6 +150,7 @@
     <!-- Replace YOUR_API_KEY with your Google Maps key -->
     <script async
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCbZFLZ60TutNIr2gCaD0d4uzDtWehMvxw&callback=initGame"></script>
+    <script type="module" src="/src/puzzleTimer.js"></script>
 </body>
 
 </html>

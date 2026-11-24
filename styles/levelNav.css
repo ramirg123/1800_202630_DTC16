@@ -1,0 +1,144 @@
+/* =========================================================
+   Level navbar (level.html)
+   Same look as the main menu / level select navbar
+   (styles/TopNav.css): translucent purple bar, lavender→pink
+   gradient border, soft glow. Buttons get lighter on hover,
+   like the level tiles. Loaded after levelStyle.css.
+   ========================================================= */
+
+.game-wrapper .level-bar {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin-bottom: 10px;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 16px;
+  background: rgba(102, 51, 153, 0.35);   /* translucent rebeccapurple */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.35);
+}
+
+/* Gradient border ring (same as the main menu navbar) */
+.game-wrapper .level-bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Back on the left, timer + stars in the middle, character on the right */
+.level-bar-items {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+/* ---------- Back: same gradient pill as the other Back buttons ---------- */
+
+.level-bar .back-btn {
+  width: auto;
+  height: 34px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+  font-size: 18px;
+  text-decoration: none;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  background:
+    linear-gradient(rebeccapurple, rebeccapurple) padding-box,
+    linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc) border-box;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.45);
+}
+
+/* Hover: slightly lighter, no glow (same as the level tiles) */
+.level-bar .back-btn:hover {
+  color: #fff;
+  background:
+    linear-gradient(#7d44bd, #7d44bd) padding-box,
+    linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc) border-box;
+  box-shadow: none;
+}
+
+.level-bar .back-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* ---------- Timer and star counter ---------- */
+
+.level-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-family: Andale Mono, monospace;   /* fixed-width digits: the timer doesn't jiggle */
+  font-size: 14px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.level-pill img {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---------- Character button: plain white icon, like the navbar profile icon ---------- */
+
+.level-bar .char-btn {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  background: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 24px;
+  text-shadow:
+    0 0 6px rgba(255, 255, 255, 0.7),
+    0 0 14px rgba(255, 255, 255, 0.35);
+  transition: background 0.2s ease;
+}
+
+/* Hover: slightly lighter, like the level tiles */
+.level-bar .char-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.level-bar .char-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* The chosen character shown on the button (src/game.js), same as the main menu profile icon */
+.level-bar .char-btn .nav-character {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(12, 0, 11, 0.5);
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 8px rgba(255, 255, 255, 0.6);
+  transition: filter 0.2s ease;
+}
+
+/* Hover: slightly lighter, no glow */
+.level-bar .char-btn:hover .nav-character {
+  filter: brightness(1.15);
+  box-shadow: 0 0 0 2px #fff;
+}
