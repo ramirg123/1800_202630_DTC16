@@ -47,32 +47,13 @@
     <p id="message"></p>
     <button id="next" hidden>Next</button>
 
-    <script>
+    <script type="module">
+        import { db } from "./src/firebaseConfig.js";
+        import { collection, getDocs } from "firebase/firestore";
+        import { onAuthReady } from "./src/authentication.js";
         const ROUNDS = 5;
 
-        // Every country has it's code associated with it
-        const COUNTRIES = [
-            { name: "United States", code: "us" }, { name: "Canada", code: "ca" },
-            { name: "Australia", code: "au" }, { name: "United Kingdom", code: "gb" },
-            { name: "Brazil", code: "br" }, { name: "Argentina", code: "ar" },
-            { name: "Italy", code: "it" }, { name: "China", code: "cn" },
-            { name: "Japan", code: "jp" }, { name: "Russia", code: "ru" },
-            { name: "South Korea", code: "kr" }, { name: "India", code: "in" },
-            { name: "North Korea", code: "kp" }, { name: "Turkey", code: "tr" },
-            { name: "Mexico", code: "mx" }, { name: "Israel", code: "il" },
-            { name: "Germany", code: "de" }, { name: "France", code: "fr" },
-            { name: "Ireland", code: "ie" }, { name: "Poland", code: "pl" },
-            { name: "Ukraine", code: "ua" }, { name: "Iran", code: "ir" },
-            { name: "Colombia", code: "co" }, { name: "Portugal", code: "pt" },
-            { name: "Spain", code: "es" }, { name: "Norway", code: "no" },
-            { name: "Jamaica", code: "jm" }, { name: "Belgium", code: "be" },
-            { name: "South Africa", code: "za" }, { name: "Algeria", code: "dz" },
-            { name: "Vietnam", code: "vn" }, { name: "Philippines", code: "ph" },
-            { name: "New Zealand", code: "nz" }, { name: "Cameroon", code: "cm" },
-            { name: "Venezuela", code: "ve" }, { name: "Peru", code: "pe" },
-            { name: "Rwanda", code: "rw" }, { name: "Mozambique", code: "mz" },
-            { name: "Singapore", code: "sg" }, { name: "Austria", code: "at" },
-        ];
+        let COUNTRIES = [];
 
         let round = 0;
         let score = 0;
@@ -83,6 +64,22 @@
         const choices = document.getElementById("choices");
         const message = document.getElementById("message");
         const nextBtn = document.getElementById("next");
+
+        async function loadFlags() {
+            info.textContent = "Loading flags…";
+            try {
+                const snapshot = await getDocs(collection(db, "flags"));
+                COUNTRIES = snapshot.docs.map((d) => d.data());
+                if (COUNTRIES.length < 4) {
+                    info.textContent = "Add at least 4 countries to the flags collection in Firestore.";
+                    return;
+                }
+                nextRound();
+            } catch (err) {
+                console.error(err);
+                info.textContent = "Couldn't load the flags from Firestore.";
+            }
+        }
 
         function randomCountry() {
             return COUNTRIES[Math.floor(Math.random() * COUNTRIES.length)];
@@ -154,7 +151,13 @@
         }
 
         nextBtn.onclick = nextRound;
-        nextRound();
+        onAuthReady(function (user) {
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
+            loadFlags();
+        });
     </script>
 </body>
 
