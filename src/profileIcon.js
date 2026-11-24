@@ -41,14 +41,33 @@ export function showCharacterIcon(name) {
     button.title = character.name;
 }
 
+// Navbar "Login" button (main menu): once signed in, show the player's
+// character name instead and link to their profile.
+export function showSignedInName(name) {
+    const loginButton = document.getElementById("loginNav");
+    if (!loginButton || !name) return;
+    loginButton.textContent = name;
+    loginButton.href = "profile.html";
+    loginButton.title = name;
+    loginButton.setAttribute("aria-label", "Profile (" + name + ")");
+}
+
 onAuthReady(async function (user) {
-    if (!user) return;   // signed out: keep the default icon
+    if (!user) return;   // signed out: keep the default icon and the "Login" button
+    let characterName = null;
     try {
         const snap = await getDoc(doc(db, "users", user.uid));
         if (snap.exists() && snap.data().character) {
-            showCharacterIcon(snap.data().character);
+            characterName = snap.data().character;
+            showCharacterIcon(characterName);
+            const character = characters.find(function (c) { return c.name === characterName; });
+            if (character) saveCharacter(character);   // this account's character, from Firebase
+        } else {
+            forgetSavedCharacter();   // this account has none: don't show a previous account's
         }
     } catch (err) {
         console.error("Could not load the player's character:", err);
     }
+    // No character picked yet: fall back to the account's name
+    showSignedInName(characterName || user.displayName || "Profile");
 });

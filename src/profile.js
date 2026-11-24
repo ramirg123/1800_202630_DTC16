@@ -2,6 +2,9 @@
 // src/profile.js  (profile.html)
 // -------------------------------------------------------------
 // Lets the player change their character at any time.
+// Also the character select shown right after sign up / login:
+//   profile.html?setup=1             -> Continue goes to the tutorial (main.html)
+//   profile.html?setup=1&next=...    -> Continue goes back to that page (e.g. a level)
 // Uses the same "character" field on users/{uid} as the level's
 // first-time picker (src/game.js), so a change here also updates
 // the navbar icon and the level won't ask again.
@@ -21,6 +24,31 @@ const status = document.getElementById("save-status");
 
 let userRef = null;
 let saving = false;
+
+// ---------- Character select mode (after sign up / login) ----------
+
+const params = new URLSearchParams(window.location.search);
+const setupMode = params.get("setup") === "1";
+const continueBtn = document.getElementById("continueBtn");
+
+// Only allow going on to one of our own pages (e.g. "level.html?level=2")
+function safeNextPage(value) {
+    return value && /^[a-z0-9-]+\.html(\?[a-z0-9=&%.-]*)?$/i.test(value) ? value : "main.html";
+}
+
+if (setupMode) {
+    document.title = "Choose Your Character";
+    document.getElementById("profile-title").textContent = "Choose Your Character";
+    document.getElementById("char-heading").textContent = "Tap a character";
+    document.getElementById("backBtn").hidden = true;   // pick a character before going anywhere
+    document.getElementById("topNav").classList.add("setup-mode");
+    continueBtn.href = safeNextPage(params.get("next"));
+    continueBtn.hidden = false;
+}
+
+function setContinueEnabled(enabled) {
+    continueBtn.setAttribute("aria-disabled", enabled ? "false" : "true");
+}
 
 // ---------- Back: return to whichever page opened the profile ----------
 
@@ -121,6 +149,7 @@ async function chooseCharacter(character) {
         showCurrent(character);
         showCharacterIcon(character.name);   // update the navbar icon right away
         showStatus("Saved! You'll play as " + character.name + ".");
+        setContinueEnabled(true);
     } catch (err) {
         console.error("Could not save character:", err);
         showStatus("Couldn't save. Check your connection and try again.", true);
@@ -139,7 +168,10 @@ onAuthReady(async function (user) {
     }
 
     userRef = doc(db, "users", user.uid);
-    greeting.textContent = "Hi, " + (user.displayName || user.email) + "!";
+    const name = user.displayName || user.email;
+    greeting.textContent = setupMode
+        ? "Welcome, " + name + "! Pick a character to start playing."
+        : "Hi, " + name + "!";
 
     try {
         const snap = await getDoc(userRef);
@@ -147,6 +179,10 @@ onAuthReady(async function (user) {
         const saved = characters.find(function (c) { return c.name === savedName; });
         markSelected(saved ? saved.name : null);
         showCurrent(saved || null);
+        // This account's character from Firebase (or none), never a previous account's
+        if (saved) saveCharacter(saved);
+        else forgetSavedCharacter();
+        setContinueEnabled(!!saved);
     } catch (err) {
         console.error("Could not load profile:", err);
         showStatus("Couldn't load your character.", true);

@@ -75,9 +75,13 @@
         const ctx = canvas.getContext("2d");
         ctx.scale(scale, scale);
 
-        // floor (same as the game canvas background)
-        ctx.fillStyle = "#2b2b2c";
-        ctx.fillRect(0, 0, width, height);
+        // floor: same chess board pattern as the levels (src/game.js)
+        for (let row = 0; row < rows.length; row++) {
+            for (let col = 0; col < rows[row].length; col++) {
+                ctx.fillStyle = (row + col) % 2 === 0 ? "#32124b" : "#1c0828";
+                ctx.fillRect(col * TILE, row * TILE, TILE, TILE);
+            }
+        }
 
         for (let row = 0; row < rows.length; row++) {
             for (let col = 0; col < rows[row].length; col++) {
@@ -86,7 +90,7 @@
                 const tile = rows[row][col];
 
                 if (tile === "1") {
-                    ctx.fillStyle = "gray";
+                    ctx.fillStyle = "#000000";   // same plain black walls as the levels (src/game.js)
                     ctx.fillRect(x, y, TILE, TILE);
                 } else if (tile === "5") {
                     if (starImage.complete && starImage.naturalWidth) {

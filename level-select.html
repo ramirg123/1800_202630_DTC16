@@ -139,10 +139,11 @@
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .back-btn:hover {
-      transform: translateY(-1px) scale(1.04);
-      box-shadow:
-        0 0 18px rgba(168, 85, 247, 0.7),
-        0 0 30px rgba(240, 171, 252, 0.35);
+      /* hover: slightly lighter, no glow (same as the level tiles) */
+      background:
+        linear-gradient(#7d44bd, #7d44bd) padding-box,
+        linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc) border-box;
+      box-shadow: none;
     }
     /* Navbar is exactly as wide as the row of level tiles (3 tiles + 2 gaps) */
     #topNav {
@@ -246,6 +247,16 @@
 
   <script type="module">
     import { LEVELS } from "./src/levels.js";
+    import { onAuthReady } from "./src/authentication.js";
+
+    // Who is signed in (null = nobody). Levels need an account, so clicks wait for this.
+    let currentUser = null;
+    const authChecked = new Promise(function (resolve) {
+      onAuthReady(function (user) {
+        currentUser = user;
+        resolve();
+      });
+    });
 
     const TOTAL_SLOTS = 9;                          // tiles shown on the page
     const AVAILABLE = Object.keys(LEVELS).length;   // levels that actually exist
@@ -272,8 +283,13 @@
         btn.textContent = i;
         btn.setAttribute("aria-label", "Play level " + i);
         // level.html can read this with: new URLSearchParams(location.search).get("level")
-        btn.addEventListener("click", () => {
-          window.location.href = "level.html?level=" + i;
+        btn.addEventListener("click", async () => {
+          await authChecked;   // usually instant; waits only if Firebase is still checking
+          if (currentUser) {
+            window.location.href = "level.html?level=" + i;
+          } else {
+            window.location.href = "login.html";   // not signed in: log in first
+          }
         });
       } else {
         btn.innerHTML = i + LOCK_SVG;   // level number + white lock

@@ -38,10 +38,11 @@ body {
 }
 
 .done-btn:hover {
-  transform: translateY(-1px) scale(1.04);
-  box-shadow:
-    0 0 18px rgba(168, 85, 247, 0.7),
-    0 0 30px rgba(240, 171, 252, 0.35);
+  /* hover: slightly lighter, no glow (same as the level tiles) */
+  background:
+    linear-gradient(#7d44bd, #7d44bd) padding-box,
+    linear-gradient(135deg, #e9d5ff, #a855f7, #f0abfc) border-box;
+  box-shadow: none;
 }
 
 .done-btn:focus-visible {
