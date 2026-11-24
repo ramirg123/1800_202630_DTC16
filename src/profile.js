@@ -40,8 +40,8 @@ if (setupMode) {
     document.title = "Choose Your Character";
     document.getElementById("profile-title").textContent = "Choose Your Character";
     document.getElementById("char-heading").textContent = "Tap a character";
-    document.getElementById("backBtn").hidden = true;   // pick a character before going anywhere
-    document.getElementById("topNav").classList.add("setup-mode");
+    document.getElementById("topNav").hidden = true;   // no navbar: pick a character before going anywhere
+    document.body.classList.add("setup-mode");
     continueBtn.href = safeNextPage(params.get("next"));
     continueBtn.hidden = false;
 }

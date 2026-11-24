@@ -268,13 +268,14 @@ body {
   box-shadow: none;
 }
 
-#topNav .back-btn[hidden] {
+/* Character select after sign up / login: no navbar */
+#topNav[hidden] {
   display: none;
 }
 
-/* Setup mode has no Back button: keep the character icon on the right */
-#topNav.setup-mode {
-  justify-content: flex-end;
+/* ...so give the title a little more room at the top */
+.setup-mode .profile-title {
+  margin-top: 40px;
 }
 
 /* ---------- Phones: match the smaller level tiles ---------- */
