@@ -106,6 +106,8 @@ const STAR_FIELD = "level" + levelNumber + "Stars";
 
 function startGame() {
     sprite = new component(16, 16, "red", startX, startY);
+    // set sprite to selected character
+    sprite.character = selectedCharacter;
     gameArea.start();
     document.getElementById("star-total").textContent = totalStars;
     document.getElementById("star-count").textContent = starsCollected;
@@ -115,6 +117,7 @@ function startGame() {
 
 const gameArea = {
     canvas: document.createElement("canvas"),
+    keys: [],
     start: function () {
         this.canvas.width = 360;
         this.canvas.height = 600;
@@ -192,24 +195,38 @@ function drawRoom() {
 
 // ---------- Movement ----------
 
-function setTouchPos(e) {
-    let rect = gameArea.canvas.getBoundingClientRect();
-    let scaleX = gameArea.canvas.width / rect.width;
-    let scaleY = gameArea.canvas.height / rect.height;
-    gameArea.x = (e.touches[0].clientX - rect.left) * scaleX;
-    gameArea.y = (e.touches[0].clientY - rect.top) * scaleY;
+const DEAD_ZONE = 50; // how far (in pixels) you can drag before the sprite starts moving
+let touchStartX = 0;
+let touchStartY = 0;
+
+function setTouchKeys(dx, dy) {
+    gameArea.keys[37] = dx < -DEAD_ZONE; // left
+    gameArea.keys[39] = dx > DEAD_ZONE; // right
+    gameArea.keys[38] = dy < -DEAD_ZONE; // up
+    gameArea.keys[40] = dy > DEAD_ZONE; // down
 }
 
 gameArea.canvas.addEventListener('touchstart', function (e) {
     e.preventDefault();
-    setTouchPos(e);
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
 }, { passive: false });
 
 gameArea.canvas.addEventListener('touchmove', function (e) {
-    e.preventDefault();
-    setTouchPos(e);
+    let dx = e.touches[0].clientX - touchStartX;
+    let dy = e.touches[0].clientY - touchStartY;
+    setTouchKeys(dx, dy);
 }, { passive: false });
 
+gameArea.canvas.addEventListener("touchend", function () {
+    setTouchKeys(0, 0);
+})
+
+gameArea.canvas.addEventListener("touchcancel", function () {
+    setTouchKeys(0, 0);
+})
+
+// ---------- Sprite ----------
 
 function component(width, height, colour, x, y, type) {
     this.type = type;
@@ -228,6 +245,8 @@ function component(width, height, colour, x, y, type) {
         let ctx = gameArea.context;
         if (this.type == "image") {
             ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        } else if (this.character) {
+            drawCharacter(ctx, this.character, this.x - 2, this.y - 4, 20);
         } else {
             ctx.fillStyle = colour;
             ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -248,10 +267,10 @@ function updateGameArea() {
     drawRoom();
     sprite.speedX = 0;
     sprite.speedY = 0;
-    if (gameArea.keys && gameArea.keys[37]) { sprite.speedX = -4; }
-    if (gameArea.keys && gameArea.keys[39]) { sprite.speedX = 4; }
-    if (gameArea.keys && gameArea.keys[38]) { sprite.speedY = -4; }
-    if (gameArea.keys && gameArea.keys[40]) { sprite.speedY = 4; }
+    if (gameArea.keys[37] || gameArea.keys[65]) { sprite.speedX = -4; }
+    if (gameArea.keys[39] || gameArea.keys[68]) { sprite.speedX = 4; }
+    if (gameArea.keys[38] || gameArea.keys[87]) { sprite.speedY = -4; }
+    if (gameArea.keys[40] || gameArea.keys[83]) { sprite.speedY = 4; }
 
     let prevX = sprite.x;
     let prevY = sprite.y;
