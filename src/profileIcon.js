@@ -42,14 +42,15 @@ export function showCharacterIcon(name) {
 }
 
 // Navbar "Login" button (main menu): once signed in, show the player's
-// character name instead and link to their profile.
+// character name instead. It still opens login.html, which shows
+// "Signed in as ..." with a Sign Out button for signed-in players.
 export function showSignedInName(name) {
     const loginButton = document.getElementById("loginNav");
     if (!loginButton || !name) return;
     loginButton.textContent = name;
-    loginButton.href = "profile.html";
+    loginButton.href = "login.html";   // shows the account card with Sign Out
     loginButton.title = name;
-    loginButton.setAttribute("aria-label", "Profile (" + name + ")");
+    loginButton.setAttribute("aria-label", "Account (" + name + "): sign out");
 }
 
 onAuthReady(async function (user) {

@@ -197,6 +197,35 @@ body {
   text-decoration: underline;
 }
 
+/* ---------- Account (already signed in) ---------- */
+
+.auth-card .account-label {
+  margin: 0;
+  text-align: center;
+  font-family: Andale Mono, monospace;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.auth-card .account-name {
+  margin: 6px 0 2px;
+  text-align: center;
+  font-family: "Audiowide", system-ui, sans-serif;
+  font-size: 24px;
+  letter-spacing: 1px;
+  overflow-wrap: anywhere;
+}
+
+.auth-card .account-email {
+  margin: 0 0 18px;
+  text-align: center;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  overflow-wrap: anywhere;
+}
+
 /* ---------- Error message ---------- */
 
 .auth-card .auth-alert {
