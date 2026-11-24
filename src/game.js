@@ -4,7 +4,7 @@ import { LEVELS, badgesFor } from "./levels.js";
 // ---------- Firestore ----------
 
 import { db } from "./firebaseConfig.js";
-import { doc, getDoc, setDoc, arrayUnion, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, arrayUnion, updateDoc, increment } from "firebase/firestore";
 import { onAuthReady } from "./authentication.js";
 //import { timestampAdd } from "firebase/firestore/pipelines";
 
@@ -379,12 +379,22 @@ async function winGame() {
     await recordTime(levelNumber, totalTime);
 
     location.href = "winscreen.html?time=" + encodeURIComponent(formatTime(totalTime)) +
-    "&badges=" + earned + "&level=" + levelNumber;
+        "&badges=" + earned + "&level=" + levelNumber;
 }
 
 async function recordTime(levelNum, totalTime) {
     const levelRef = doc(db, "users", userId, "levels", String(levelNum));
     const snap = await getDoc(levelRef);
+
+    const limits = level.badgeTimes;
+    if (limits) {
+        const oldBadges = snap.exists() ? badgesFor(snap.data().time, limits) : 0;
+        const newBadges = badgesFor(totalTime, limits);
+
+        if (newBadges > oldBadges) {
+            await updateDoc(userRef, { badgeBank: increment(newBadges - oldBadges) });
+        }
+    }
 
     if (snap.exists() && snap.data().time <= totalTime) {
         return;   // existing time is as good or better
