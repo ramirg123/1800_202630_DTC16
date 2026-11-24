@@ -103,6 +103,7 @@ for (let row = 0; row < room.length; row++) {
 
 function startGame() {
     sprite = new component(16, 16, "red", startX, startY);
+    // set sprite to selected character
     sprite.character = selectedCharacter;
     gameArea.start();
     document.getElementById("star-total").textContent = totalStars;
@@ -113,6 +114,7 @@ function startGame() {
 
 const gameArea = {
     canvas: document.createElement("canvas"),
+    keys: [],
     start: function () {
         this.canvas.width = 360;
         this.canvas.height = 600;
@@ -190,24 +192,38 @@ function drawRoom() {
 
 // ---------- Movement ----------
 
-function setTouchPos(e) {
-    let rect = gameArea.canvas.getBoundingClientRect();
-    let scaleX = gameArea.canvas.width / rect.width;
-    let scaleY = gameArea.canvas.height / rect.height;
-    gameArea.x = (e.touches[0].clientX - rect.left) * scaleX;
-    gameArea.y = (e.touches[0].clientY - rect.top) * scaleY;
+const DEAD_ZONE = 15; // how far (in pixels) you can drag before the sprite starts moving
+let touchStartX = 0;
+let touchStartY = 0;
+
+function setTouchKeys(dx, dy) {
+    gameArea.keys[37] = dx < -DEAD_ZONE; // left
+    gameArea.keys[39] = dx > DEAD_ZONE; // right
+    gameArea.keys[38] = dy < -DEAD_ZONE; // up
+    gameArea.keys[40] = dy > DEAD_ZONE; // down
 }
 
 gameArea.canvas.addEventListener('touchstart', function (e) {
     e.preventDefault();
-    setTouchPos(e);
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
 }, { passive: false });
 
 gameArea.canvas.addEventListener('touchmove', function (e) {
-    e.preventDefault();
-    setTouchPos(e);
+    let dx = e.touches[0].clientX - touchStartX;
+    let dy = e.touches[0].clientY - touchStartY;
+    setTouchKeys(dx, dy);
 }, { passive: false });
 
+gameArea.canvas.addEventListener("touchend", function () {
+    setTouchKeys (0, 0);
+})
+
+gameArea.canvas.addEventListener("touchcancel", function () {
+    setTouchKeys (0, 0);
+})
+
+// ---------- Sprite ----------
 
 function component(width, height, colour, x, y, type) {
     this.type = type;
@@ -224,10 +240,13 @@ function component(width, height, colour, x, y, type) {
 
     this.update = function () {
         let ctx = gameArea.context;
+        // draw image case
         if (this.type == "image") {
             ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+            //draw character case
         } else if (this.character) {
             drawCharacter(ctx, this.character, this.x - 2, this.y - 4, 20);
+            // draw colour case
         } else {
             ctx.fillStyle = colour;
             ctx.fillRect(this.x, this.y, this.width, this.height);
