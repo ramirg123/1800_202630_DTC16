@@ -143,11 +143,11 @@ const gameArea = {
 // ---------- Tiles ----------
 
 // Checkerboard floor in the site's dark purples (same family as the blob background)
-const FLOOR_LIGHT = "#32124b";
-const FLOOR_DARK = "#1c0828";
+const FLOOR_LIGHT = "#9b74c8";
+const FLOOR_DARK = "#633f7d";
 
 // Walls: one plain colour, pure black
-const WALL_COLOUR = "#000000";
+const WALL_COLOUR = "#19161e";
 
 function drawRoom() {
     let ctx = gameArea.context;
